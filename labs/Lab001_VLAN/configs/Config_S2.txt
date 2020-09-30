@@ -1,0 +1,82 @@
+Настройка основных параметров коммутатора (S1):
+1. Подключилась консолью к роутеру.
+2. Для перехода в превилигированный режим использовала команду:
+	Switch>enable
+3. Для перехода в рехим конфигурации используется команда:
+	Switch#configure terminal
+4. Назначила имя роутеру:
+	Switch(config)#hostname S2
+5. Отключила поиск DNS:
+	S2(config)#no ip domain-lookup
+6. Назначила class как привилегированный зашифрованный пароль EXEC:
+	S2(config)#enable password level 15 class
+7. Назначила cisco в качестве пароля консоли и включила вход:
+	S2(config)#line console 0
+	S2(config-line)#password cisco
+	S2(config-line)#login
+	S2(config-line)#exit
+8. Назначила cisco в качестве пароля VTY и включила вход:
+	S2(config)#line vty 0 15
+	S2(config-line)#password cisco
+	S2(config-line)#login
+	S2(config-line)#exit
+9. Зашифровала пароль:
+	S2(config)#service password-encryption
+10. Создала баннер, предупреждающий любого, кто получает доступ к устройству, о запрещении несанкционированного доступа:
+	S2(config)#banner motd >
+!--------------------------------------!
+!                                      !
+!                 STOP                 !
+!   Unauthorized entry is prohibited   !
+!                                      !
+!--------------------------------------!
+>
+11. Установила время на роутере:
+	S1#clock set 21:06:45 29 September 2020
+12. Сохранила текущую конфигурацию в файл стартовой конфигурации.
+	S1#copy running-config startup-config
+
+	
+		
+conf terminal
+!
+hostname S2
+no ip domain-lookup
+!
+enable password level 15 0 class
+!
+line console 0
+password cisco
+login
+exit
+!
+line vty 0 15
+password cisco
+login
+exit
+!
+service password-encryption
+!
+banner motd >
+!--------------------------------------!
+!                                      !
+!                 STOP                 !
+!   Unauthorized entry is prohibited   !
+!                                      !
+!--------------------------------------!
+>
+!
+exit
+!
+clock set 10:51:43 29 September 2020
+!
+copy running-config startup-config
+
+!
+	
+	
+	
+	
+	
+	
+

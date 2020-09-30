@@ -1,0 +1,142 @@
+	Настройка основных параметров коммутатора (S1):
+1. Подключилась консолью к роутеру.
+2. Для перехода в превилигированный режим использовала команду:
+	Switch>enable
+3. Для перехода в рехим конфигурации используется команда:
+	Switch#configure terminal
+4. Назначила имя роутеру:
+	Switch(config)#hostname S1
+5. Отключила поиск DNS:
+	S1(config)#no ip domain-lookup
+6. Назначила class как привилегированный зашифрованный пароль EXEC:
+	S1(config)#enable password level 15 class
+7. Назначила cisco в качестве пароля консоли и включила вход:
+	S1(config)#line console 0
+	S1(config-line)#password cisco
+	S1(config-line)#login
+	S1(config-line)#exit
+8. Назначила cisco в качестве пароля VTY и включила вход:
+	S1(config)#line vty 0 15
+	S1(config-line)#password cisco
+	S1(config-line)#login
+	S1(config-line)#exit
+9. Зашифровала пароль:
+	S1(config)#service password-encryption
+10. Создала баннер, предупреждающий любого, кто получает доступ к устройству, о запрещении несанкционированного доступа:
+	S1(config)#banner motd >
+!--------------------------------------!
+!                                      !
+!                 STOP                 !
+!   Unauthorized entry is prohibited   !
+!                                      !
+!--------------------------------------!
+>
+11. Установила время на роутере:
+	S1#clock set 21:06:45 29 September 2020
+12. Сохранила текущую конфигурацию в файл стартовой конфигурации.
+	S1#copy running-config startup-config
+
+	
+		
+conf terminal
+!
+hostname S1
+no ip domain-lookup
+!
+enable password level 15 0 class
+!
+line console 0
+password cisco
+login
+exit
+!
+line vty 0 15
+password cisco
+login
+exit
+!
+service password-encryption
+!
+banner motd >
+!--------------------------------------!
+!                                      !
+!                 STOP                 !
+!   Unauthorized entry is prohibited   !
+!                                      !
+!--------------------------------------!
+>
+!
+exit
+!
+clock set 10:42:45 29 September 2020
+!
+copy running-config startup-config
+
+!
+	
+	
+	Создание VLAN и назначение портов коммутатора
+	
+1. Создала VLAN на коммутаторе, согласно таблице VLANS:
+	S1(config)#vlan 3
+	S1(config-vlan)#name Management
+	S1(config-vlan)#vlan 7
+	S1(config-vlan)#name ParkingLot
+	S1(config-vlan)#vlan 8
+	S1(config-vlan)#name Native
+	S1(config-vlan)#exit
+	S1(config)#^Z
+2. Проверила наличие нужных vlans с помощью команды:
+	S1#show vlan
+3. Настроила интерфейс управления и шлюз по умолчанию, используя информацию об IP-адресе в таблице адресации:
+	S1(config)#interface vlan 3
+	S1(config-if)#ip address 192.168.3.11 255.255.255.0
+	S1(config-if)#no shutdown
+	S1(config-if)#exit
+	S1(config)#ip default-gateway 192.168.3.1
+
+4. Назначила все неиспользуемые порты в ParkingLot VLAN, настроила их для статического режима доступа (static access mode) и деактивировала их административно:
+	S1(config)#interface range GigabitEthernet0/0-3
+	S1(config-if-range)#switchport mode access
+	S1(config-if-range)#switchport access vlan 7
+	S1(config-if-range)#shutdown
+	S1(config-if-range)#exit
+	S1(config)#interface range F0/7-24
+	S1(config-if-range)#switchport mode access
+	S1(config-if-range)#switchport access vlan 7
+	S1(config-if-range)#shutdown
+	S1(config-if-range)#exit
+	S1(config)#interface range G0/1-2
+	S1(config-if-range)#switchport mode access
+	S1(config-if-range)#switchport access vlan 7
+	S1(config-if-range)#shutdown
+	
+	
+
+conf terminal
+!
+vlan 3
+name Management
+vlan 7
+name ParkingLot
+vlan 8
+name Native
+exit
+!
+!
+interface range GigabitEthernet0/0-3
+switchport mode access
+switchport access vlan 7
+shutdown
+exit
+interface range F0/7-24
+switchport mode access
+switchport access vlan 7
+shutdown
+exit
+range G0/1-2
+switchport mode access
+switchport access vlan 7
+shutdown
+
+
