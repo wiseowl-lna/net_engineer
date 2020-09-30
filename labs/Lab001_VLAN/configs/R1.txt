@@ -1,0 +1,61 @@
+conf terminal
+!
+hostname R1
+no ip domain-lookup
+enable password level 15 0 class
+!
+line console 0
+password cisco
+login
+exit
+!
+line vty 0 15
+password cisco
+login
+exit
+!
+service password-encryption
+!
+banner motd >
+!--------------------------------------!
+!                                      !
+!                 STOP                 !
+!   Unauthorized entry is prohibited   !
+!                                      !
+!--------------------------------------!
+>
+!
+exit
+!
+copy running-config startup-config
+
+!
+clock set 21:06:45 29 September 2020
+!
+
+conf terminal
+!
+interface G0/0/1
+ no shutdown
+ exit
+!
+interface G0/0/1.3
+ description Net_3
+ encapsulation dot1Q 3
+ ip address 192.168.3.1 255.255.255.0
+ exit
+!
+interface G0/0/1.4
+ description Net_4
+ encapsulation dot1Q 4
+ ip address 192.168.4.1 255.255.255.0
+ exit
+!
+interface G0/0/1.8
+ description Nativ_8
+ no ip address
+ exit
+exit
+!
+copy running-config startup-config
+
