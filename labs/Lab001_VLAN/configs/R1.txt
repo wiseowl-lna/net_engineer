@@ -18,6 +18,7 @@ interface G0/0/1.4
 !
 interface G0/0/1.8
  description Nativ_8
+ encapsulation dot1Q 8 native
  no ip address
  exit
 exit
