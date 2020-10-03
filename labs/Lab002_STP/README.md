@@ -64,7 +64,9 @@
 4. Ввела команду **_show spanning-tree_** на всех трех коммутаторах.
 
 ![](PIM_S1.png)
+
 ![](PIM_S2.png)
+
 ![](PIM_S3.png)
 
 
