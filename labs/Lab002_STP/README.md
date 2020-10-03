@@ -47,6 +47,19 @@
 ![](Ping_from_S2_to_S3.png)
 
 
+#### Определение корневого моста:
+1. Отключила все порты на коммутаторе.
+
+conf t
+!
+interface range f0/1-24, g0/1-2
+ shutdown
+ exit
+exit
+!
+
+
+
 
 
 
