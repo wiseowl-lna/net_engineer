@@ -50,12 +50,18 @@
 #### Определение корневого моста:
 1. Отключила все порты на коммутаторе.
 
-conf t \n
+conf t
+
 !
+
 interface range f0/1-24, g0/1-2
- shutdown
- exit
+
+shutdown
+
 exit
+
+exit
+
 !
 
 
