@@ -1,0 +1,35 @@
+conf terminal
+!
+no ip domain-lookup
+hostname S1
+!
+enable secret level 15 0 class
+!
+line console 0
+ password cisco
+ login
+exit
+!
+line vty 0 4
+ password cisco
+ login
+exit
+!
+service password-encryption
+!
+banner motd >
+!--------------------------------------!
+!                                      !
+!                 STOP                 !
+!   Unauthorized entry is prohibited   !
+!                                      !
+!--------------------------------------!
+>
+!
+exit
+!
+clock set 16:26:45 09 October 2020
+!
+copy running-config startup-config
+
+!

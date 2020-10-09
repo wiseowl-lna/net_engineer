@@ -1,0 +1,89 @@
+conf terminal
+!
+interface e0/0
+ no shutdown
+ ip address 10.0.0.1 255.255.255.252
+ exit
+exit
+!
+
+conf terminal
+!
+interface e0/1
+ no shutdown
+ exit
+!
+interface e0/1.100
+ description Clients
+ encapsulation dot1Q 100
+ ip address 192.168.1.1 255.255.255.192
+ exit
+!
+interface e0/1.200
+ description MGMT
+ encapsulation dot1Q 200
+ ip address 192.168.1.65 255.255.255.224
+ exit
+!
+interface e0/1.1000
+ description Nativ_1000
+ encapsulation dot1Q 1000 native
+ no ip address
+ exit
+exit
+!
+copy running-config startup-config
+
+!
+!
+conf terminal
+ ip route 0.0.0.0 0.0.0.0 10.0.0.2
+ exit
+!
+copy running-config startup-config
+
+
+! DHCP
+
+conf terminal
+ ip dhcp excluded-address 192.168.1.1 192.168.1.5
+ ip dhcp excluded-address 192.168.1.97 192.168.1.101
+ ip dhcp pool CLIENTS_POOL
+  network 192.168.1.0 255.255.255.192
+  default-router 192.168.1.1
+  lease 2 12 30
+  domain-name ccna-lab.com
+  exit
+ ip dhcp pool R2_Client_LAN
+  network 192.168.1.96 255.255.255.240
+  default-router 192.168.1.97
+  lease 2 12 30
+  domain-name ccna-lab.com
+  exit
+ exit
+!
+copy running-config startup-config
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

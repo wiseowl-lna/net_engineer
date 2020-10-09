@@ -1,0 +1,35 @@
+conf terminal
+!
+interface e0/0
+ no shutdown
+ ip address 10.0.0.2 255.255.255.252
+ exit
+exit
+!
+
+conf terminal
+!
+interface e0/1
+ no shutdown
+ ip address 192.168.1.97 255.255.255.240
+ exit
+exit
+!
+copy running-config startup-config
+
+!
+conf terminal
+ ip route 0.0.0.0 0.0.0.0 10.0.0.1
+ exit
+!
+copy running-config startup-config
+
+!
+conf terminal
+ ip helper-address 10.0.0.1
+ exit
+!
+copy running-config startup-config
+
+
+ 

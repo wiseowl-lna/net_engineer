@@ -1,0 +1,62 @@
+conf terminal
+!
+vlan 100
+name Clients
+vlan 200
+name Management
+vlan 999
+name Parking_Lot
+vlan 1000
+name Native
+exit
+exit
+!
+
+conf terminal
+interface vlan 200
+ ip address 192.168.1.2 255.255.255.192
+ no shutdown
+ exit
+ip default-gateway 192.168.1.1
+exit
+!
+copy running-config startup-config
+
+!
+
+conf terminal
+interface range e0/0-3, e1/2-3, e2/0-3, e3/0-3, e4/0-3, e5/0-3
+ switchport mode access
+ switchport access vlan 999
+ shutdown
+ exit
+exit
+!
+copy running-config startup-config
+
+!
+
+conf terminal
+interface e1/1
+ switchport mode access
+ switchport access vlan 100
+ no shutdown
+ exit
+exit
+!
+copy running-config startup-config
+
+!
+conf terminal
+interface e1/0
+ switchport trunk encapsulation dot1q
+ switchport trunk allowed vlan 100,200,1000
+ switchport trunk native vlan 1000
+ switchport mode trunk
+ exit
+exit
+!
+copy running-config startup-config
+
+!
+
