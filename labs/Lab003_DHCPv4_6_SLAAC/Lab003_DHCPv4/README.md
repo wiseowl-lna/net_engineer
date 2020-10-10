@@ -131,6 +131,28 @@
 
 ![](show_ip_dhcp_binding.png)
 
+- Для проверки других сообщение DHCP выполнила команду **_show ip dhcp server statistics_**. Результат вывода на рисунке 5.
+
+Рис.5
+
+![](show_ip_dhcp_server_statistics.png)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
