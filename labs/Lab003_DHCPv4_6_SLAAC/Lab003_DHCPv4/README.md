@@ -100,7 +100,7 @@
 
 Рис.2
 
-![](S1_sh _int_trunk.PNG)
+![](S1_sh _int_trunk.png)
 
 
 
