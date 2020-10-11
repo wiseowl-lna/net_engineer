@@ -48,7 +48,7 @@
 
 Рис.2
 
-![](Topology.png)
+![](R1_ping_R2_E0_1.png)
 
 
 
