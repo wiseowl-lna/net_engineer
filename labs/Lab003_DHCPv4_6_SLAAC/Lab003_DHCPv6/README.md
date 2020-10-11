@@ -73,9 +73,8 @@
 Для получения более расширенной информации о настройках PC выполнила команду **_ipconfig /all_**. Вывод на рис.4.
 
 Рис.3
-
-       ![](PC-A_ipcongig_all_1.png)
-       ![](PC-A_ipcongig_all_2.png)
+![](PC-A_ipcongig_all_1.png)
+![](PC-A_ipcongig_all_2.png)
 
 
 
