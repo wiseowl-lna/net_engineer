@@ -74,11 +74,8 @@
 
 Рис.3
 
-![](PC-A_ipcongig_all_1.png)
-
-Рис.3а
-
-![](PC-A_ipcongig_all_2.png)
+       ![](PC-A_ipcongig_all_1.png)
+       ![](PC-A_ipcongig_all_2.png)
 
 
 
