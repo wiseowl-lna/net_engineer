@@ -1,0 +1,111 @@
+conf t
+ ipv6 unicast-routing
+ exit
+!
+
+conf t
+int lo 0
+ ip address 192.168.1.12 255.255.255.255 
+ ipv6 address 2001:AAAA:BB01:192::12/128
+ no shutdown
+ exit
+!
+int e0/2
+ ip address 10.1.0.3 255.255.255.254
+ ipv6 address 2001:AAAA:BB01:102::3:E2/64
+ ipv6 address FE80::12:E2 link-local
+ no shutdown
+ exit
+!
+int e0/3
+ ip address 10.1.0.7 255.255.255.254
+ ipv6 address 2001:AAAA:BB01:106::7:E3/64
+ ipv6 address FE80::12:E3 link-local
+ no shutdown
+ exit
+!
+int e0/1
+ ip address 10.1.0.12 255.255.255.254
+ ipv6 address 2001:AAAA:BB01:112::12:E1/64
+ ipv6 address FE80::12:E1 link-local
+ no shutdown
+ exit
+!
+int e0/0
+ no shutdown
+ exit
+exit
+!
+
+
+
+! Настраиваю VRRP
+!
+conf t
+ fhrp version vrrp v3
+ exit
+! 
+
+!
+interface Ethernet0/0.10
+ description MGMT_SWITCH
+ encapsulation dot1Q 10
+ ip address 172.16.1.2 255.255.255.0
+ ipv6 address 2001:AAAA:BB01:172::2/64
+ vrrp 10 address-family ipv4
+  priority 254
+  address 172.16.1.1 primary
+  exit-vrrp
+ vrrp 11 address-family ipv6
+  priority 254
+  address FE80::12:1 primary
+  address 2001:AAAA:BB01:172::1/64
+  exit-vrrp
+end
+!
+
+conf t
+!
+interface Ethernet0/0.11
+ description Users_Net_0
+ encapsulation dot1Q 11
+ ip address 100.1.0.2 255.255.255.0
+ ipv6 address 2001:AAAA:BB01:1011::2/64
+ vrrp 12 address-family ipv4
+  priority 254
+  address 100.1.0.1 primary
+  exit-vrrp
+ vrrp 13 address-family ipv6
+  priority 254
+  address FE80::12:1 primary
+  address 2001:AAAA:BB01:1011::1/64
+  exit-vrrp
+end
+!
+
+conf t
+!
+interface Ethernet0/0.12
+ description Users_Net_1
+ encapsulation dot1Q 12
+ ip address 100.1.1.2 255.255.255.0
+ ipv6 address 2001:AAAA:BB01:1012::2/64
+ vrrp 14 address-family ipv4
+  priority 254
+  address 100.1.1.1 primary
+  exit-vrrp
+ vrrp 15 address-family ipv6
+  priority 254
+  address FE80::12:1 primary
+  address 2001:AAAA:BB01:1012::1/64
+  exit-vrrp
+end
+!
+
+
+copy running-config startup-config
+
+!
+
+
+

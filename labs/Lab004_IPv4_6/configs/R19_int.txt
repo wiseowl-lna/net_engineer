@@ -1,0 +1,25 @@
+conf t
+ ipv6 unicast-routing
+ exit
+!
+
+conf t
+int lo 0
+ ip address 192.168.1.19 255.255.255.255 
+ ipv6 address 2001:AAAA:BB01:192::19/128
+ no shutdown
+ exit
+!
+int e0/0
+ ip address 10.1.0.1 255.255.255.254
+ ipv6 address 2001:AAAA:BB01:100::1:E0/64
+ ipv6 address FE80::19:E0 link-local
+ no shutdown
+ exit
+exit
+!
+
+copy running-config startup-config
+
+!
+
