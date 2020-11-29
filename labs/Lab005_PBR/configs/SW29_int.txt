@@ -1,0 +1,61 @@
+conf t
+ ipv6 unicast-routing
+ exit
+!
+
+!
+conf terminal
+!
+vlan 10
+name MGMT_SWITCH
+vlan 11
+name Users_Net_3_0
+vlan 12
+name Users_Net_3_1
+vlan 999
+name ParkingLot
+exit
+exit
+!
+!
+conf terminal
+interface vlan 10
+ ip address 172.16.3.29 255.255.255.0
+ ipv6 address 2001:AAAA:BB03:172::29c/64
+ ipv6 address FE80::c29:10 link-local
+ no shutdown
+ exit
+ip default-gateway 172.16.3.1
+exit
+!
+!
+conf terminal
+interface e0/2
+ switchport trunk allowed vlan 10,11,12
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ no shutdown
+ exit
+!
+interface e0/0
+ switchport mode access
+ switchport access vlan 11
+ no shutdown
+ exit
+!
+interface e0/1
+ switchport mode access
+ switchport access vlan 12
+ no shutdown
+ exit
+!
+interface e0/3
+ switchport mode access
+ switchport access vlan 999
+ shutdown
+ exit
+exit
+!
+ 
+copy running-config startup-config
+

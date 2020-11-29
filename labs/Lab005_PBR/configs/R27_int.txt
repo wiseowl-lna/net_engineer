@@ -1,0 +1,36 @@
+conf t
+ ipv6 unicast-routing
+ exit
+!
+
+conf t
+int lo 0
+ ip address 192.168.4.27 255.255.255.255 
+ ipv6 address 2001:AAAA:BB04:192::27/128
+ no shutdown
+ exit
+exit
+
+
+!
+conf t
+int e0/0
+ ip address 10.5.0.13 255.255.255.254
+ ipv6 address 2001:AAAA:BB05:112::13:E0/64
+ ipv6 address FE80::27:E0 link-local
+ no shutdown
+ exit
+exit
+!
+
+! Маршрут по-умолчанию.
+!
+conf terminal
+!
+ ip route 0.0.0.0 0.0.0.0 10.5.0.12 name R25_e_0_1
+ ipv6 route ::/0 2001:AAAA:BB05:112::12:E1 name R25_e_0_1
+!
+
+copy running-config startup-config
+
+!

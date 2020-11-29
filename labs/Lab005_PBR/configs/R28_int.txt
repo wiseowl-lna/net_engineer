@@ -1,0 +1,93 @@
+conf t
+ ipv6 unicast-routing
+ exit
+!
+
+conf t
+int lo 0
+ ip address 192.168.3.28 255.255.255.255 
+ ipv6 address 2001:AAAA:BB03:192::28/128
+ no shutdown
+ exit
+exit
+
+
+!
+conf t
+int e0/0
+ ip address 10.5.0.17 255.255.255.254
+ ipv6 address 2001:AAAA:BB05:116::17:E0/64
+ ipv6 address FE80::28:E0 link-local
+ no shutdown
+ exit
+!
+!
+int e0/1
+ ip address 10.5.0.11 255.255.255.254
+ ipv6 address 2001:AAAA:BB05:110::11:E1/64
+ ipv6 address FE80::28:E1 link-local
+ no shutdown
+ exit
+!
+!
+int e0/2
+ no ip address
+ no shutdown
+ exit
+!
+!
+int e0/2.10
+ description MGMT_SWITCH
+ encapsulation dot1Q 10
+ ip address 172.16.3.1 255.255.255.0
+ ipv6 address 2001:AAAA:BB03:172::1/64
+ ipv6 address FE80::28:E210 link-local
+ no shutdown
+ exit
+!
+!
+int e0/2.11
+ description USERS_NET_3_0
+ encapsulation dot1Q 11
+ ip address 100.3.0.1 255.255.255.0
+ ipv6 address 2001:AAAA:BB03:1011::1/64
+ ipv6 address FE80::28:E211 link-local
+ no shutdown
+ exit
+!
+!
+int e0/2.12
+ description USERS_NET_3_1
+ encapsulation dot1Q 12
+ ip address 100.3.1.1 255.255.255.0
+ ipv6 address 2001:AAAA:BB03:1012::1/64
+ ipv6 address FE80::28:E212 link-local
+ no shutdown
+ exit
+exit
+!
+
+copy running-config startup-config
+
+!
+
+
+! DHCP
+
+conf terminal
+ ip dhcp excluded-address 100.3.0.1 100.3.0.5
+ ip dhcp excluded-address 100.3.1.1 100.3.1.5
+ ip dhcp pool USERS_NET_3_0
+  network 100.3.0.0 255.255.255.0
+  default-router 100.3.0.1
+  lease 2 12 30
+  domain-name four-lab.com
+  exit
+ ip dhcp pool USERS_NET_3_1
+  network 100.3.1.0 255.255.255.0
+  default-router 100.3.1.1
+  lease 2 12 30
+  domain-name four-lab.com
+  exit
+ exit
+!
