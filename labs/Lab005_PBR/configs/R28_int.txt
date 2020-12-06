@@ -92,6 +92,11 @@ conf terminal
  exit
 !
 
+! Включила безклассовую раюоту с IPv4
+conf terminal
+ ip classless
+ exit
+
 
 ! Настройка отслеживания линков и распределение трафика.
 
@@ -150,10 +155,13 @@ exit
 ! Track
 
 track 1 ip sla 1 reachability
+exit
 track 2 ip sla 2 reachability
+exit
 track 3 ip sla 3 reachability
+exit
 track 4 ip sla 4 reachability
-
+exit
 
 ! IP SLA
 
@@ -184,6 +192,16 @@ exit
 ip sla schedule 4 life forever start-time now
 
 
+! Повесила route-map политику на интерфейсы
+
+conf terminal
+
+interface Ethernet0/2.11
+ ip policy route-map PBR_TRAFFIC
+exit
+interface Ethernet0/2.12
+ ip policy route-map PBR_TRAFFIC
+exit 
 
 
 
