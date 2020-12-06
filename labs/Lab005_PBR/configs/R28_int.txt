@@ -140,7 +140,7 @@ exit
 
 conf terminal
 route-map PBR_TRAFFIC permit 40
- match ipv6 address ACL-VL11-IPV6
+ match ipv6 address ACL-VL12-IPV6
  set ipv6 next-hop 2001:AAAA:BB05:116::10:E3/64
  set ipv6 next-hop 2001:AAAA:BB05:110::16:E1/64
  exit
