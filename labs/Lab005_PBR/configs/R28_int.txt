@@ -91,3 +91,80 @@ conf terminal
   exit
  exit
 !
+
+
+! Настройка отслеживания линков и распределение трафика.
+
+! ACL
+
+conf terminal
+ ip access-list extended ACL-VL11
+  permit ip 100.3.0.0 0.0.0.255 any
+  exit
+ ip access-list extended ACL-VL12
+  permit ip 100.3.1.0 0.0.0.255 any
+  exit
+ ipv6 access-list ACL-VL11-IPV6
+  permit ipv6 2001:AAAA:BB03:1011::/64 any
+  exit
+ ipv6 access-list ACL-VL12-IPV6
+  permit ipv6 2001:AAAA:BB03:1012::/64 any
+  exit
+exit
+
+! PBR
+
+conf terminal
+route-map PBR_TRAFFIC permit 10
+ match ip address ACL-VL11
+ set ip next-hop verify-availability 10.5.0.16 10 track 1
+ set ip next-hop verify-availability 10.5.0.10 20 track 2
+ exit
+exit
+
+conf terminal
+route-map PBR_TRAFFIC permit 20
+ match ipv6 address ACL-VL11-IPV6
+ set ipv6 next-hop 2001:AAAA:BB05:116::16:E1/64
+ set ipv6 next-hop 2001:AAAA:BB05:110::10:E3/64
+ exit
+exit
+
+conf terminal
+route-map PBR_TRAFFIC permit 30
+ match ip address ACL-VL12
+ set ip next-hop verify-availability 10.5.0.10 10 track 2
+ set ip next-hop verify-availability 10.5.0.16 20 track 1
+ exit
+exit
+
+conf terminal
+route-map PBR_TRAFFIC permit 40
+ match ipv6 address ACL-VL11-IPV6
+ set ipv6 next-hop 2001:AAAA:BB05:116::10:E3/64
+ set ipv6 next-hop 2001:AAAA:BB05:110::16:E1/64
+ exit
+exit
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
