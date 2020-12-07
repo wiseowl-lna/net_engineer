@@ -97,6 +97,16 @@ conf terminal
  ip classless
  exit
 
+! Статический маршрут в сторону Лабытнанги:
+ 
+conf terminal
+!
+ ip route 10.5.0.12 255.255.255.254 10.5.0.10 name To_Labytnangi
+ ip route 10.5.0.12 255.255.255.254 10.5.0.16 name To_Labytnangi
+!
+ ipv6 route 2001:AAAA:BB05:112::/64 2001:AAAA:BB05:116::16:E1 name To_Labytnangi
+ ipv6 route 2001:AAAA:BB05:112::/64 2001:AAAA:BB05:110::10:E3 name To_Labytnangi
+!
 
 ! Настройка отслеживания линков и распределение трафика.
 
