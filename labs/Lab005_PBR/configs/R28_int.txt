@@ -129,6 +129,15 @@ exit
 
 conf terminal
 route-map PBR_TRAFFIC permit 20
+ match ip address ACL-VL12
+ set ip next-hop verify-availability 10.5.0.10 10 track 2
+ set ip next-hop verify-availability 10.5.0.16 20 track 1
+ exit
+exit
+
+
+conf terminal
+route-map PBR_TRAFFIC permit 30
  match ipv6 address ACL-VL11-IPV6
  set ipv6 next-hop 2001:AAAA:BB05:116::16:E1/64 10 track 3
  set ipv6 next-hop 2001:AAAA:BB05:110::10:E3/64 20 track 4
@@ -136,18 +145,10 @@ route-map PBR_TRAFFIC permit 20
 exit
 
 conf terminal
-route-map PBR_TRAFFIC permit 30
- match ip address ACL-VL12
- set ip next-hop verify-availability 10.5.0.10 10 track 2
- set ip next-hop verify-availability 10.5.0.16 20 track 1
- exit
-exit
-
-conf terminal
 route-map PBR_TRAFFIC permit 40
  match ipv6 address ACL-VL12-IPV6
- set ipv6 next-hop 2001:AAAA:BB05:116::10:E3/64 10 track 4
- set ipv6 next-hop 2001:AAAA:BB05:110::16:E1/64 20 track 3
+ set ipv6 next-hop 2001:AAAA:BB05:110::10:E3/64 10 track 4
+ set ipv6 next-hop 2001:AAAA:BB05:116::16:E1/64 20 track 3
  exit
 exit
 
