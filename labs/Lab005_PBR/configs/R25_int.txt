@@ -58,3 +58,8 @@ conf terminal
  ip route 100.3.0.0 255.255.254.0 10.5.0.11 name To_Net_Chokurdah
  ip route 100.3.0.0 255.255.254.0 10.5.0.9 150
 !
+ ipv6 route 2001:AAAA:BB03::/48 2001:AAAA:BB05:108::9:E2 150 name To_Net_Chokurdah
+ ipv6 route 2001:AAAA:BB03::/48 2001:AAAA:BB05:110::11:E1 name To_Net_Chokurdah
+!
+
+copy running-config startup-config
