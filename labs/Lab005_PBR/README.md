@@ -145,6 +145,9 @@ FE80::/10 - сеть для адресов link-local. Для адреса в п
      ip route 100.3.0.0 255.255.254.0 10.5.0.11 name To_Net_Chokurdah
      ip route 100.3.0.0 255.255.254.0 10.5.0.9 150
     !
+     ipv6 route 2001:AAAA:BB03::/48 2001:AAAA:BB05:108::9:E2 150 name To_Net_Chokurdah
+     ipv6 route 2001:AAAA:BB03::/48 2001:AAAA:BB05:110::11:E1 name To_Net_Chokurdah
+    !
     
     На маршрутизаторе R26
     
@@ -153,14 +156,11 @@ FE80::/10 - сеть для адресов link-local. Для адреса в п
      ip route 10.5.0.12 255.255.255.254 10.5.0.8 name To_Labytnangi
      ip route 100.3.0.0 255.255.254.0 10.5.0.17 name To_Chokurdah
     !
-
+     ipv6 route 2001:AAAA:BB03::/48 2001:AAAA:BB05:116::17:E0 name To_Chokurdah
+     ipv6 route 2001:AAAA:BB05:112::/64 2001:AAAA:BB05:108::8:E2 name To_Labytnangi
+    !
 ---------------------------------------------------------------
 
-Проверить связность линков можно пропинговав устройство по ipv4 адресу, ipv6 адресу и по ipv6 link-local адресу (рис 1).
-
-Рисунок 1.
-
-![](Ping_link.png)
 
 
 #### c. Распределение трафика между двумя линками с провайдером.
