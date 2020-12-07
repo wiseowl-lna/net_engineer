@@ -188,24 +188,111 @@ FE80::/10 - сеть для адресов link-local. Для адреса в п
     exit
     !
 
+    Создала маршрутные карты route-map:
 
-
+    !
+    conf terminal
+    route-map PBR_TRAFFIC permit 10
+     match ip address ACL-VL11
+     set ip next-hop verify-availability 10.5.0.16 10 track 1
+     set ip next-hop verify-availability 10.5.0.10 20 track 2
+     exit
+    exit
+    !
+    conf terminal
+    route-map PBR_TRAFFIC permit 20
+     match ip address ACL-VL12
+     set ip next-hop verify-availability 10.5.0.10 10 track 2
+     set ip next-hop verify-availability 10.5.0.16 20 track 1
+     exit
+    exit
+    !
+    conf terminal
+    route-map PBR_TRAFFIC permit 30
+     match ipv6 address ACL-VL11-IPV6
+     set ipv6 next-hop 2001:AAAA:BB05:116::16:E1/64 10 track 3
+     set ipv6 next-hop 2001:AAAA:BB05:110::10:E3/64 20 track 4
+     exit
+    exit
+    !
+    conf terminal
+    route-map PBR_TRAFFIC permit 40
+     match ipv6 address ACL-VL12-IPV6
+     set ipv6 next-hop 2001:AAAA:BB05:110::10:E3/64 10 track 4
+     set ipv6 next-hop 2001:AAAA:BB05:116::16:E1/64 20 track 3
+     exit
+    exit
     !
 
 ---------------------------------------------------------------
 
+Для того, что бы правила route-map начали работать необходимо настроить политики на интерфейсе.
+
+---------------------------------------------------------------
+
+    conf terminal
+    !
+    interface Ethernet0/2.11
+     ip policy route-map PBR_TRAFFIC
+     exit
+    interface Ethernet0/2.12
+     ip policy route-map PBR_TRAFFIC
+     exit 
+    !
+---------------------------------------------------------------
+
+
 #### d. Настройка отслеживания линка через технологию IP SLA.
 
-На данном этапе лабораторной работы настроила коммутаторы. Настройка заключается в следующем:
+На данном этапе лабораторной работы наобходимо настроить отслеживание линков с помощью технологии IP SLA. Для этой задачи использовала протокол ICMP. Пинги запускаются каждые 5 секунд с маршрутизатора R28 на ip адреса интерфейсов маршрутизаторов R25 и R26 (настройки ниже).
 
-    a. Разрешила использование IPм6 командой ipv6 unicast-routing.
-    b. Создала VLANs.
-    c. На интерфейсе влана управления добавила IPv4 и IPv6 адреса.
-    d. Настроила порты uplink в trunk.
-    e. Настроила порты в сторону пользователей как access с необходимым VLAN.
+---------------------------------------------------------------
 
-Конфигурация коммутаторов находится в файлах **"--_int.txt"_**, которые находятся в папке [configs](configs/). Первые символы в названии файлов соответствуют именам сетевых устройств.
+    conf terminal
+    !
+    ip sla 1
+     icmp-echo 10.5.0.16 source-ip 10.5.0.17
+     frequency 5
+    exit
+    ip sla schedule 1 life forever start-time now
+    !
+    ip sla 2
+     icmp-echo 10.5.0.10 source-ip 10.5.0.11
+     frequency 5
+    exit
+    ip sla schedule 2 life forever start-time now
+    !
+    ip sla 3
+     icmp-echo 2001:AAAA:BB05:116::16:E1 source-ip 2001:AAAA:BB05:116::17:E0
+     frequency 5
+    exit
+    ip sla schedule 3 life forever start-time now
+    !
+    ip sla 4
+     icmp-echo 2001:AAAA:BB05:116::10:E3 source-ip 2001:AAAA:BB05:116::11:E1
+     frequency 5
+    exit
+    ip sla schedule 4 life forever start-time now
+    !
+---------------------------------------------------------------
 
+Для связи route-map и ip sla используются track.
+
+---------------------------------------------------------------
+
+    !
+    track 1 ip sla 1 reachability
+    exit
+    track 2 ip sla 2 reachability
+    exit
+    track 3 ip sla 3 reachability
+    exit
+    track 4 ip sla 4 reachability
+    exit
+    !
+---------------------------------------------------------------
+
+Настройки оборудования выполнены. Следующий шаг - проверка выполненных работ.
 
 #### **_III. Проверка работоспособности системы._**
 
@@ -282,6 +369,10 @@ FE80::/10 - сеть для адресов link-local. Для адреса в п
 Рисунок 11.
 
 ![](Trace_VPC31_R26e0_IPV6_1_down.png)
+
+Трафик изменил свое направление.
+
+**Из вышеприведенных примеров вижу, что отслеживание линка через технологию IP SLA для IPV6 так же работает!**
 
 
 #### **_IV. Итоговая схема._**
