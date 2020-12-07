@@ -92,7 +92,7 @@ conf terminal
  exit
 !
 
-! Включила безклассовую раюоту с IPv4
+! Включила безклассовую работу с IPv4
 conf terminal
  ip classless
  exit
