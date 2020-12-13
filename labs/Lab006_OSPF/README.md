@@ -463,19 +463,52 @@ FE80::/10 - сеть для адресов link-local. Для адреса в п
 
 #### b. Фильтрация OSPF.
 
-Для того, что б
+Варианты фильтрации показаны в этом разделе на примере маршрутизаторов R19 (определение area, как total stub командой **_area 101 stub no-summary_**) и R20 (distribute-list для IPv6) в паре с R15 (prefix-list для IPv4).
+
+**Маршрутизатор R19**
 ---------------------------------------------------------------
-    На маршрутизаторе R25
-    
+  
     conf terminal
     !
-     
+    router ospf 10
+     router-id 19.19.19.19
+     area 101 stub no-summary
+     passive-interface default
+     no passive-interface Ethernet0/0 
+     exit
+    ipv6 router ospf 10
+     router-id 19.19.19.19
+     area 101 stub no-summary
+     exit
+    exit
     !
+    
+    conf t
+    !
+    interface Loopback0
+     ip ospf 10 area 101
+     ipv6 ospf 10 area 101
+    !
+    interface Ethernet0/0
+     ip ospf network point-to-point
+     ip ospf 10 area 101
+     ipv6 ospf 10 area 101
+     exit
+    exit
+  
 ---------------------------------------------------------------
 
+Проверила маршруты приходящие на R19 (рис.6 для IPv4) и (рис.7 для IPv6)
 
+Рисунок 6.
 
+![](O-IA_R19.png)
 
+Рисунок 7.
+
+![](O-IA_R19_ipv6.png)
+
+R19 получил информацию о шлюзе по-умолчанию по протоколу OSPF от маршрутизатора R14. Так как R14 является ABR (граничным), а area 101, в которой находятся оба маршрутизатора, является totally stubby area, то он (R14) объявляет себя шлюзом по-умолчанию.
 
 
 #### **_IV. Итоговая схема._**
