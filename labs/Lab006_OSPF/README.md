@@ -183,7 +183,6 @@ FE80::/10 - сеть для адресов link-local. Для адреса в п
 ![](Zony_OSPF.png)
 
 
-
 #### **_II. Настройка сетевого оборудования._**
 
 
@@ -191,7 +190,7 @@ FE80::/10 - сеть для адресов link-local. Для адреса в п
 
 В данном разделе настроила на маршрктизаторах протокол OSPF. Ниже привела команды для настройки маршрутизаторов с комментариями.
 
-Маршрутизатор R14:
+**Маршрутизатор R14:**
 
 ---------------------------------------------------------------
         
@@ -269,23 +268,107 @@ FE80::/10 - сеть для адресов link-local. Для адреса в п
 
 Файлы с полной конфигурацией маршрутизаторов находятся в папке [configs](configs/) в файлах **_RRR-int.txt_**. Первые символы в названии файлов соответствуют именам сетевых устройств.
 
-Провела некоторые проверки. С помощью команды **_sh ip route static_** проверила статический маршрут по-умолчанию (результат выведен не весь). 
+Провела некоторые проверки. 
+
+1. С помощью команды **_sh ip route static_** проверила статический маршрут по-умолчанию (результат выведен не весь). 
+
+----------------------------------------------------------------
 
     Gateway of last resort is 10.0.0.0 to network 0.0.0.0
 
     S*    0.0.0.0/0 [1/0] via 10.0.0.0
 
+----------------------------------------------------------------
+
+2. С помощью команды **_sh ip protocols_** можно посмотреть какие интерфейсы являются пассивными, проверить Router ID, наличие фильтров и т.д.
+
+----------------------------------------------------------------
+
+    Routing Protocol is "ospf 10"
+     Outgoing update filter list for all interfaces is not set
+     Incoming update filter list for all interfaces is not set
+     Router ID 14.14.14.14
+     It is an area border and autonomous system boundary router
+    Redistributing External Routes from,
+     Number of areas in this router is 2. 1 normal 1 stub 0 nssa
+     Maximum path: 4
+     Routing for Networks:
+     Routing on Interfaces Configured Explicitly (Area 0):
+       Loopback0
+       Ethernet0/2
+       Ethernet0/1
+       Ethernet0/0
+     Routing on Interfaces Configured Explicitly (Area 101):
+       Ethernet0/3
+     Passive Interface(s):
+       Loopback0
+       RG-AR-IF-INPUT1
+       VoIP-Null0
+
+----------------------------------------------------------------
 
 
+**Маршрутизатор R15:**
 
+----------------------------------------------------------------
+    
+    ! Основные настройки совпадают с настройками на R14/
+    !
+    conf t
+    !
+    router ospf 10
+     router-id 15.15.15.15
+     passive-interface default
+     no passive-interface Ethernet0/0
+     no passive-interface Ethernet0/1
+     no passive-interface Ethernet0/2
+     no passive-interface Ethernet0/3
+     default-information originate
+     exit
+    ipv6 router ospf 10
+     router-id 15.15.15.15
+     default-information originate
+     exit
+    exit
+    
+    conf t
+    !
+    interface Loopback0
+     ip ospf 10 area 0
+     ipv6 ospf 10 area 0
+     exit
+    !
+    interface Ethernet0/0
+     ip ospf 10 area 0
+     ipv6 ospf 10 area 0
+     exit
+    !
+    interface Ethernet0/1
+     ip ospf 10 area 0
+     ipv6 ospf 10 area 0
+     exit
+    !
+    interface Ethernet0/2
+     ip ospf 10 area 0
+     ipv6 ospf 10 area 0
+     exit
+    !
+    interface Ethernet0/3
+     ip ospf network point-to-point
+     ip ospf 10 area 102
+     ipv6 ospf 10 area 102
+     exit
+    exit
 
+----------------------------------------------------------------
 
+Для проверки работы динамического протокола OSPF на маршрутизаторе R15 ввела команду **_sh ip route_**. Вывод команды на рисунке 2.
 
+Рисунок 2.
 
+![](O-E2_R15.png)
 
-
-
-
+Из вывода вижу, что по протоколу OSPF получен шлюз по-умолчанию из двух направлений.
 
 
 
