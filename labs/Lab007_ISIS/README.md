@@ -139,178 +139,182 @@ FE80::/10 - сеть для адресов link-local. Для адреса в п
 
 #### a. Настройка на маршрутизаторах протокола ISIS.
 
-В данном разделе настроила на маршрутизаторах протокол OSPF. Ниже привела команды для настройки маршрутизаторов с комментариями.
+В данном разделе настроила на роутерах протокол динамической маршрутизации ISIS. Ниже привела команды для настройки маршрутизаторов с комментариями.
 
-**Маршрутизатор R14:**
+**Маршрутизатор R23:**
 
 ---------------------------------------------------------------
         
-    ! Статический маршрут по-умолчанию для IPv4 иIPv6.
+    ! Создала процесс ISIS.
     conf t
     !
-    ip route 0.0.0.0 0.0.0.0 10.0.0.0
-    ipv6 route ::/0 2001:AAAA:BB00:100::E0
-    exit
-    
-    ! Создала процесс OSPF.
+    router ISIS
+     !
+     ! Так как в процессе ISIS не используются IP-адреса, устанавливаю внутренний адрес маршрутизатора.
+     !
+     net 49.2222.0023.0023.0023.00
+        
+        ! где 49 - указывает тип адреса (в нашем случае - приватный адрес)
+        ! 2222 - номер зоны (area). Area на маршрутизаторах в одной зоне обязательно должны совпадать.
+        ! 0023.0023.0023 - ID системы
+        ! 00 - N Selector (всегда нули).
+        
+     exit
+    exit 
+      
+    ! Настроила интерфейсы, участвующие в процессе ISIS.
+    !
     conf t
     !
-    router ospf 10
-     ! Указываю идентификатор маршрутизатора а процессе OSPF.
-     router-id 14.14.14.14
-     
-     ! Обявляю соседям, о том, что я знаю маршрут по-умолчанию.
-     default-information originate
-     
-     ! Перевожу все интерфейсы участвующие в процессе OSPF в пассивное состояние.
-     passive-interface default
-     
-     ! Вывела из пассивного состояния нужные интерфейсы.
-     no passive-interface Ethernet0/0
-     no passive-interface Ethernet0/1
-     no passive-interface Ethernet0/2
-     no passive-interface Ethernet0/3
-     
-     ! Указала, что Area 101 является "Totally Stubby Area".
-     area 101 stub no-summary
-     
-     exit
-     
-     ! Аналогичные настройки для IPv6
-     ipv6 router ospf 10
-      router-id 14.14.14.14
-      area 101 stub no-summary
-      default-information originate
-      exit
-     exit
-     
-    ! Настроила интерфейсы, участвующие в процессе и отнесла их к соответствующим area.
-    conf t
+    ! Проанансирую lo0 на маршрутизаторе, чтобы он появился на других роутерах в таблице маршрутизации.
     !
     interface Loopback0
-     ip ospf 10 area 0
-     ipv6 ospf 10 area 0
+     ip router isis
+     ipv6 router isis
      exit
     !
-    interface Ethernet0/0
-     ip ospf 10 area 0
-     ipv6 ospf 10 area 0
-     exit
+    ! Так же настрою Ethernet0/1 и Ethernet0/2
     !
     interface Ethernet0/1
-     ip ospf 10 area 0
-     ipv6 ospf 10 area 0
+     ip router isis
+     ipv6 router isis
      exit
     !
     interface Ethernet0/2
-     ip ospf 10 area 0
-     ipv6 ospf 10 area 0
+     ip router isis
+     ipv6 router isis
      exit
-    !
-    interface Ethernet0/3
-     ! Так как с R19 прямой линк, указала, что этот интерфейс point-to-point, тем самым исключила маршрутизатор R19 из выборов DR, BDR.
-     ip ospf network point-to-point
-     ip ospf 10 area 101
-     ipv6 ospf 10 area 101
-     exit
-    !
-    
+    exit
+ 
 --------------------------------------------------------------
 
 Файлы с полной конфигурацией маршрутизаторов находятся в папке [configs](configs/) в файлах **_RRR-int.txt_**. Первые символы в названии файлов соответствуют именам сетевых устройств.
 
+**Маршрутизатор R25:**
+
+----------------------------------------------------------------
+    
+    conf t
+    !
+    router ISIS
+     net 49.2222.0025.0025.0025.00
+     exit
+    exit 
+      
+    conf t
+    interface Loopback0
+     ip router isis
+     ipv6 router isis
+     exit
+    interface Ethernet0/0
+     ip router isis
+     ipv6 router isis
+     exit
+    interface Ethernet0/2
+     ip router isis
+     ipv6 router isis
+     exit
+    exit
+
+----------------------------------------------------------------
+
+Если не указывать тип взаимодействия, то по умолчанию на маршрутизаторах в одной зоне поднимается Lavel-1-2.
+
+Настроила маршрутизатор R24 в зоне 24.
+
+**Маршрутизатор R24:**
+
+----------------------------------------------------------------
+    
+    conf t
+    !
+    router ISIS
+     net 49.0024.0024.0024.0024.00
+     exit
+    exit 
+      
+    conf t
+    interface Loopback0
+     ip router isis
+     ipv6 router isis
+     exit
+    interface Ethernet0/1
+     ip router isis
+     ipv6 router isis
+     exit
+    interface Ethernet0/2
+     ip router isis
+     ipv6 router isis
+     exit
+    exit
+
+----------------------------------------------------------------
+
+Так же, подвергся настройке маршрутизатор R26 из зоны 26.
+
+**Маршрутизатор R26:**
+
+----------------------------------------------------------------
+    
+    conf t
+    !
+    router ISIS
+     net 49.0026.0026.0026.0026.00
+     exit
+    exit 
+      
+    conf t
+    interface Loopback0
+     ip router isis
+     ipv6 router isis
+     exit
+    interface Ethernet0/0
+     ip router isis
+     ipv6 router isis
+     exit
+    interface Ethernet0/2
+     ip router isis
+     ipv6 router isis
+     exit
+    exit
+
+----------------------------------------------------------------
+
+Замечу, что между маршрутизаторами из разных зон, устанавливается тип взаимодейстаия только Lavel-2.
+
+
 Провела некоторые проверки. 
 
-1. С помощью команды **_sh ip route static_** проверила статический маршрут по-умолчанию (результат выведен не весь). 
+1. С помощью команды **_sh isis neighbors_**, запущенной поочередно на всех маршрутизаторах R23-R26, посмотрим соседство по протоколу ISIS (рис.2-5). 
 
-----------------------------------------------------------------
+Рисунок 2.
 
-    Gateway of last resort is 10.0.0.0 to network 0.0.0.0
+![](Neighbors_R23.png)
 
-    S*    0.0.0.0/0 [1/0] via 10.0.0.0
+Рисунок 3.
 
-----------------------------------------------------------------
+![](Neighbors_R25.png)
+
+Рисунок 4.
+
+![](Neighbors_R24.png)
+
+Рисунок 5.
+
+![](Neighbors_R26.png)
+
+
+
 
 2. С помощью команды **_sh ip protocols_** можно посмотреть какие интерфейсы являются пассивными, проверить Router ID, наличие фильтров и т.д.
 
 ----------------------------------------------------------------
 
     Routing Protocol is "ospf 10"
-     Outgoing update filter list for all interfaces is not set
-     Incoming update filter list for all interfaces is not set
-     Router ID 14.14.14.14
-     It is an area border and autonomous system boundary router
-    Redistributing External Routes from,
-     Number of areas in this router is 2. 1 normal 1 stub 0 nssa
-     Maximum path: 4
-     Routing for Networks:
-     Routing on Interfaces Configured Explicitly (Area 0):
-       Loopback0
-       Ethernet0/2
-       Ethernet0/1
-       Ethernet0/0
-     Routing on Interfaces Configured Explicitly (Area 101):
-       Ethernet0/3
-     Passive Interface(s):
-       Loopback0
-       RG-AR-IF-INPUT1
-       VoIP-Null0
+
 
 ----------------------------------------------------------------
 
-**Маршрутизатор R15:**
-
-----------------------------------------------------------------
-    
-    ! Основные настройки совпадают с настройками на R14.
-    !
-    conf t
-    !
-    router ospf 10
-     router-id 15.15.15.15
-     passive-interface default
-     no passive-interface Ethernet0/0
-     no passive-interface Ethernet0/1
-     no passive-interface Ethernet0/2
-     no passive-interface Ethernet0/3
-     default-information originate
-     exit
-    ipv6 router ospf 10
-     router-id 15.15.15.15
-     default-information originate
-     exit
-    exit
-    
-    conf t
-    !
-    interface Loopback0
-     ip ospf 10 area 0
-     ipv6 ospf 10 area 0
-     exit
-    !
-    interface Ethernet0/0
-     ip ospf 10 area 0
-     ipv6 ospf 10 area 0
-     exit
-    !
-    interface Ethernet0/1
-     ip ospf 10 area 0
-     ipv6 ospf 10 area 0
-     exit
-    !
-    interface Ethernet0/2
-     ip ospf 10 area 0
-     ipv6 ospf 10 area 0
-     exit
-    !
-    interface Ethernet0/3
-     ip ospf network point-to-point
-     ip ospf 10 area 102
-     ipv6 ospf 10 area 102
-     exit
-    exit
-
-----------------------------------------------------------------
 
 Для проверки работы динамического протокола OSPF на маршрутизаторе R15 ввела команду **_sh ip route_**. Вывод команды на рисунке 2.
 
