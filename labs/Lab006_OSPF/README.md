@@ -211,7 +211,6 @@ FE80::/10 - сеть для адресов link-local. Для адреса в п
      ! Вывела из пассивного состояния нужные интерфейсы.
      no passive-interface Ethernet0/0
      no passive-interface Ethernet0/1
-     no passive-interface Ethernet0/2
      no passive-interface Ethernet0/3
      
      ! Указала, что Area 101 является "Totally Stubby Area".
