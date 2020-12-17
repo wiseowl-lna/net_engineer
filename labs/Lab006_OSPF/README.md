@@ -244,11 +244,6 @@ FE80::/10 - сеть для адресов link-local. Для адреса в п
      ipv6 ospf 10 area 0
      exit
     !
-    interface Ethernet0/2
-     ip ospf 10 area 0
-     ipv6 ospf 10 area 0
-     exit
-    !
     interface Ethernet0/3
      ! Так как с R19 прямой линк, указала, что этот интерфейс point-to-point, тем самым исключила маршрутизатор R19 из выборов DR, BDR.
      ip ospf network point-to-point
@@ -278,25 +273,25 @@ FE80::/10 - сеть для адресов link-local. Для адреса в п
 ----------------------------------------------------------------
 
     Routing Protocol is "ospf 10"
-     Outgoing update filter list for all interfaces is not set
-     Incoming update filter list for all interfaces is not set
-     Router ID 14.14.14.14
-     It is an area border and autonomous system boundary router
-    Redistributing External Routes from,
-     Number of areas in this router is 2. 1 normal 1 stub 0 nssa
-     Maximum path: 4
-     Routing for Networks:
-     Routing on Interfaces Configured Explicitly (Area 0):
-       Loopback0
-       Ethernet0/2
-       Ethernet0/1
-       Ethernet0/0
-     Routing on Interfaces Configured Explicitly (Area 101):
-       Ethernet0/3
-     Passive Interface(s):
-       Loopback0
-       RG-AR-IF-INPUT1
-       VoIP-Null0
+      Outgoing update filter list for all interfaces is not set
+      Incoming update filter list for all interfaces is not set
+      Router ID 14.14.14.14
+      It is an area border and autonomous system boundary router
+     Redistributing External Routes from,
+      Number of areas in this router is 2. 1 normal 1 stub 0 nssa
+      Maximum path: 4
+      Routing for Networks:
+      Routing on Interfaces Configured Explicitly (Area 0):
+        Loopback0
+        Ethernet0/1
+        Ethernet0/0
+      Routing on Interfaces Configured Explicitly (Area 101):
+        Ethernet0/3
+      Passive Interface(s):
+        Ethernet0/2
+        Loopback0
+        RG-AR-IF-INPUT1
+        VoIP-Null0
 
 ----------------------------------------------------------------
 
@@ -313,7 +308,6 @@ FE80::/10 - сеть для адресов link-local. Для адреса в п
      passive-interface default
      no passive-interface Ethernet0/0
      no passive-interface Ethernet0/1
-     no passive-interface Ethernet0/2
      no passive-interface Ethernet0/3
      default-information originate
      exit
@@ -336,11 +330,6 @@ FE80::/10 - сеть для адресов link-local. Для адреса в п
      exit
     !
     interface Ethernet0/1
-     ip ospf 10 area 0
-     ipv6 ospf 10 area 0
-     exit
-    !
-    interface Ethernet0/2
      ip ospf 10 area 0
      ipv6 ospf 10 area 0
      exit
