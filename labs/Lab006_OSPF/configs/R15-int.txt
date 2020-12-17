@@ -1,8 +1,8 @@
 Building configuration...
 
-Current configuration : 2606 bytes
+Current configuration : 2532 bytes
 !
-! Last configuration change at 18:23:06 EET Sun Dec 13 2020
+! Last configuration change at 16:06:21 EET Thu Dec 17 2020
 version 15.2
 service timestamps debug datetime msec
 service timestamps log datetime msec
@@ -84,10 +84,8 @@ interface Ethernet0/1
 !
 interface Ethernet0/2
  ip address 10.6.0.1 255.255.255.254
- ip ospf 10 area 0
  ipv6 address FE80::15:E2 link-local
  ipv6 address 2001:AAAA:BB06:100::1:E2/64
- ipv6 ospf 10 area 0
 !
 interface Ethernet0/3
  ip address 10.1.0.10 255.255.255.254
