@@ -154,142 +154,51 @@ FE80::/10 - сеть для адресов link-local. Для адреса в п
 
 В данном разделе настроила на роутерах протокол динамической маршрутизации ISIS. Ниже привела команды для настройки маршрутизаторов с комментариями.
 
-**Маршрутизатор R23:**
+**Маршрутизатор R18:**
 
 ---------------------------------------------------------------
         
     ! Создала процесс ISIS.
     conf t
     !
-    router ISIS
-     !
-     ! Так как в процессе ISIS не используются IP-адреса, устанавливаю внутренний адрес маршрутизатора.
-     !
-     net 49.2222.0023.0023.0023.00
-        
-        ! где 49 - указывает тип адреса (в нашем случае - приватный адрес)
-        ! 2222 - номер зоны (area). Area на маршрутизаторах в одной зоне обязательно должны совпадать.
-        ! 0023.0023.0023 - ID системы
-        ! 00 - N Selector (всегда нули).
-        
-     exit
-    exit 
-      
-    ! Настроила интерфейсы, участвующие в процессе ISIS.
-    !
-    conf t
-    !
-    ! Проанонсирую lo0 на маршрутизаторе, чтобы он появился на других роутерах в таблице маршрутизации.
-    !
-    interface Loopback0
-     ip router isis
-     ipv6 router isis
-     exit
-    !
-    ! Так же настрою Ethernet0/1 и Ethernet0/2
-    !
-    interface Ethernet0/1
-     ip router isis
-     ipv6 router isis
-     exit
-    !
-    interface Ethernet0/2
-     ip router isis
-     ipv6 router isis
-     exit
-    exit
+ 
  
 --------------------------------------------------------------
 
 Файлы с полной конфигурацией маршрутизаторов находятся в папке [configs](configs/) в файлах **_RRR-int.txt_**. Первые символы в названии файлов соответствуют именам сетевых устройств.
 
-**Маршрутизатор R25:**
+**Маршрутизатор R16:**
 
 ----------------------------------------------------------------
     
     conf t
     !
-    router ISIS
-     net 49.2222.0025.0025.0025.00
-     exit
-    exit 
-      
-    conf t
-    interface Loopback0
-     ip router isis
-     ipv6 router isis
-     exit
-    interface Ethernet0/0
-     ip router isis
-     ipv6 router isis
-     exit
-    interface Ethernet0/2
-     ip router isis
-     ipv6 router isis
-     exit
-    exit
-
+   
 ----------------------------------------------------------------
 
 Если не указывать тип взаимодействия, то по умолчанию, на маршрутизаторах в одной зоне поднимается Level-1-2.
 
 Настроила маршрутизатор R24 в зоне 24.
 
-**Маршрутизатор R24:**
+**Маршрутизатор R17:**
 
 ----------------------------------------------------------------
     
     conf t
     !
-    router ISIS
-     net 49.0024.0024.0024.0024.00
-     exit
-    exit 
-      
-    conf t
-    interface Loopback0
-     ip router isis
-     ipv6 router isis
-     exit
-    interface Ethernet0/1
-     ip router isis
-     ipv6 router isis
-     exit
-    interface Ethernet0/2
-     ip router isis
-     ipv6 router isis
-     exit
-    exit
+    
 
 ----------------------------------------------------------------
 
 Так же, подвергся настройке маршрутизатор R26 из зоны 26.
 
-**Маршрутизатор R26:**
+**Маршрутизатор R32:**
 
 ----------------------------------------------------------------
     
     conf t
     !
-    router ISIS
-     net 49.0026.0026.0026.0026.00
-     exit
-    exit 
-      
-    conf t
-    interface Loopback0
-     ip router isis
-     ipv6 router isis
-     exit
-    interface Ethernet0/0
-     ip router isis
-     ipv6 router isis
-     exit
-    interface Ethernet0/2
-     ip router isis
-     ipv6 router isis
-     exit
-    exit
+   
 
 ----------------------------------------------------------------
 
