@@ -352,118 +352,107 @@ FE80::/10 - сеть для адресов link-local. Для адреса в п
 
 
 В связи с тем, что было принято решение терминировать сети пользователей на коммутаторах с использованием функций L3, приведу пример настройки коммутатора с данными функциями.
-__Примечание: В связи с тем, что на эмуляторе не работает L3 для Port-channel, перенесла настройку на interface vlan 1. 
+
+*Примечание: В связи с тем, что на эмуляторе не работает L3 для Port-channel, я перенесла настройку на interface vlan 1. 
 На Port-channel 1 оставила настройку L2 в режиме access vlan1 (настройки по-умолчанию для порта коммутатора), интерфейсы входящие в группу (Etherchannel 1) повторяют настройку Po1.
-IPv4 и IPv6 адреса с интерфейса Port-channel 1 перенесла на интерфейс Vlan1.__
-
-
+IPv4 и IPv6 адреса с интерфейса Port-channel 1 перенесла на интерфейс Vlan1.*
 
 **Коммутатор SW9:**
 
 ----------------------------------------------------------------
     
     conf t
-!
-router eigrp NM_EIGRP
- address-family ipv4 autonomous-system 1
-  eigrp router-id 9.9.9.9
-  af-interface default
-   shutdown
-   exit
-  topology base
-   no auto-summary
-   exit
-  network 192.168.2.9 0.0.0.1
-  network 10.2.0.4 0.0.0.1
-  network 10.2.0.8 0.0.0.1
-  network 10.2.0.14 0.0.0.1
-  network 100.2.0.0 0.0.0.255
-  exit
-!
+    !
+    router eigrp NM_EIGRP
+     address-family ipv4 autonomous-system 1
+      eigrp router-id 9.9.9.9
+      af-interface default
+       shutdown
+       exit
+      topology base
+       no auto-summary
+       exit
+      network 192.168.2.9 0.0.0.1
+      network 10.2.0.4 0.0.0.1
+      network 10.2.0.8 0.0.0.1
+      network 10.2.0.14 0.0.0.1
+      network 100.2.0.0 0.0.0.255
+      exit
+    !
 
-  af-interface Loopback 0
-   no shutdown
-   passive-interface
-   exit
-  af-interface Vlan11
-   no shutdown
-   passive-interface
-   exit
-  af-interface ethernet 0/3
-   no shutdown
-   exit
-  af-interface ethernet 1/0
-   no shutdown
-   exit
-  af-interface Vlan1
-   no shutdown
-   exit
-  exit
- exit
-exit 
-!
+      af-interface Loopback 0
+       no shutdown
+       passive-interface
+       exit
+      af-interface Vlan11
+       no shutdown
+       ! Интерфейс отправила в состояние passive, так как интерфейс смотрит в сторону пользовательской сети.
+       passive-interface
+       exit
+      af-interface ethernet 0/3
+       no shutdown
+       exit
+      af-interface ethernet 1/0
+       no shutdown
+       exit
+      af-interface Vlan1
+       no shutdown
+       exit
+      exit
+     exit
+    exit 
+    !
 
-conf t
-!
-router eigrp NM_EIGRP
- address-family ipv6 autonomous-system 1
-  eigrp router-id 9.9.9.9
-  af-interface default
-   shutdown
-   exit
-  exit
-!
-  af-interface Loopback 0
-   no shutdown
-   passive-interface
-   exit
-  af-interface Vlan11
-   no shutdown
-   passive-interface
-   exit
-  af-interface ethernet 0/3
-   no shutdown
-   exit
-  af-interface ethernet 1/0
-   no shutdown
-   exit
-  af-interface Vlan1
-   no shutdown
-   exit
-  exit
- exit
-exit
-
-    
-
-----------------------------------------------------------------
-
-Так же, подвергся настройке маршрутизатор R26 из зоны 26.
-
-**Маршрутизатор R32:**
-
-----------------------------------------------------------------
-    
     conf t
     !
-   
+    router eigrp NM_EIGRP
+     address-family ipv6 autonomous-system 1
+      eigrp router-id 9.9.9.9
+      af-interface default
+       shutdown
+       exit
+      exit
+    !
+      af-interface Loopback 0
+       no shutdown
+       passive-interface
+       exit
+      af-interface Vlan11
+       no shutdown
+       passive-interface
+       exit
+      af-interface ethernet 0/3
+       no shutdown
+       exit
+      af-interface ethernet 1/0
+       no shutdown
+       exit
+      af-interface Vlan1
+       no shutdown
+       exit
+      exit
+     exit
+    exit
+    !
+    
 
 ----------------------------------------------------------------
-
-Замечу, что между маршрутизаторами из разных зон, устанавливается тип взаимодейстаия только Level-2.
-
 
 **_Провела некоторые проверки._**
 
-1. С помощью команды **_sh isis neighbors_**, запущенной поочередно на всех маршрутизаторах R23-R26, посмотрим соседство по протоколу ISIS (рис.2-5). 
+После настройки всех устройств пришло время посмотреть, работает ли наш динамический протокол.
 
-Рисунок 2.
+1. С помощью команды **_sh ip eigrp neighbors_**, запущенной поочередно на всех маршрутизаторах и коммутаторах, посмотрим соседство по протоколу EIGRP.
 
-![](Neighbors_R23.png)
+*_Маршрутизатор 18_* 
 
-Рисунок 3.
+Протокол IPv4
 
-![](Neighbors_R25.png)
+![](Neighbors_R18_IPv4.png)
+
+Протокол IPv6
+
+![](Neighbors_R18_IPv6.png)
 
 Как и было сказано раньше, вижу, что между маршрутизаторами находящимися в одной зоне - тип взаимодействия установился L1-2 (это маршрутизаторы R23 и R25), между тем как у R23 с R24 (рис.1, 4), у R25 с R26 (рис.2, 5) и у R24 с R26 (рис.4, 5) установлен тип взаимодействия только L2
 
