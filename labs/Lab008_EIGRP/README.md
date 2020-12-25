@@ -450,6 +450,34 @@ IPv4 и IPv6 адреса с интерфейса Port-channel 1 перенес�
 
 ![](Neighbors_R18_IPv6.png)
 
+*_Маршрутизатор 17_* 
+
+![](Neighbors_R17_IPv4.png)
+
+![](Neighbors_R17_IPv6.png)
+
+*_Маршрутизатор 16_* 
+
+![](Neighbors_R16_IPv4.png)
+
+![](Neighbors_R16_IPv6.png)
+
+*_Маршрутизатор 32_* 
+
+![](Neighbors_R32_IPv4.png)
+
+![](Neighbors_R32_IPv6.png)
+
+*_Коммутатор 9_* 
+
+![](Neighbors_SW9_IPv4.png)
+
+![](Neighbors_SW9_IPv6.png)
+*_Коммутатор 10_* 
+
+![](Neighbors_SW9_IPv4.png)
+
+![](Neighbors_SW9_IPv6.png)
 
 
 
