@@ -1,0 +1,202 @@
+Building configuration...
+
+Current configuration : 3366 bytes
+!
+version 15.2
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+!
+hostname R17
+!
+boot-start-marker
+boot-end-marker
+!
+!
+enable secret 5 $1$63fA$YzZrWRaq4QXRS/77/O2x71
+!
+no aaa new-model
+clock timezone EET 2 0
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+!
+!
+!
+
+
+!
+!
+!
+!
+no ip domain lookup
+ip cef
+ipv6 unicast-routing
+ipv6 cef
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+!
+!
+!
+!
+redundancy
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 192.168.2.17 255.255.255.255
+ ipv6 address 2001:AAAA:BB02:192::17/128
+!
+interface Ethernet0/0
+ ip address 10.2.0.4 255.255.255.254
+ ipv6 address FE80::17:E0 link-local
+ ipv6 address 2001:AAAA:BB02:104::4:E0/64
+!
+interface Ethernet0/1
+ ip address 10.2.0.1 255.255.255.254
+ ipv6 address FE80::17:E1 link-local
+ ipv6 address 2001:AAAA:BB02:100::1:E1/64
+!
+interface Ethernet0/2
+ ip address 10.2.0.6 255.255.255.254
+ ipv6 address FE80::17:E2 link-local
+ ipv6 address 2001:AAAA:BB02:106::6:E3/64
+!
+interface Ethernet0/3
+ no ip address
+ shutdown
+!
+!
+router eigrp NM_EIGRP
+ !
+ address-family ipv4 unicast autonomous-system 1
+  !
+  af-interface default
+   shutdown
+  exit-af-interface
+  !
+  af-interface Loopback0
+   no shutdown
+   passive-interface
+  exit-af-interface
+  !
+  af-interface Ethernet0/0
+   summary-address 10.2.0.0 255.255.255.0
+   summary-address 100.2.0.0 255.255.254.0
+   summary-address 172.16.2.0 255.255.255.0
+   summary-address 192.168.2.0 255.255.255.0
+   no shutdown
+  exit-af-interface
+  !
+  af-interface Ethernet0/1
+   summary-address 10.2.0.0 255.255.255.0
+   summary-address 100.2.0.0 255.255.254.0
+   summary-address 172.16.2.0 255.255.255.0
+   summary-address 192.168.2.0 255.255.255.0
+   no shutdown
+  exit-af-interface
+  !
+  af-interface Ethernet0/2
+   summary-address 10.2.0.0 255.255.255.0
+   summary-address 100.2.0.0 255.255.254.0
+   summary-address 172.16.2.0 255.255.255.0
+   summary-address 192.168.2.0 255.255.255.0
+   no shutdown
+  exit-af-interface
+  !
+  topology base
+  exit-af-topology
+  network 10.2.0.0 0.0.0.1
+  network 10.2.0.4 0.0.0.1
+  network 10.2.0.6 0.0.0.1
+  network 192.168.2.17 0.0.0.0
+  eigrp router-id 17.17.17.17
+ exit-address-family
+ !
+ address-family ipv6 unicast autonomous-system 1
+  !
+  af-interface default
+   shutdown
+  exit-af-interface
+  !
+  af-interface Loopback0
+   no shutdown
+   passive-interface
+  exit-af-interface
+  !
+  af-interface Ethernet0/0
+   summary-address 2001:AAAA:BB02::/48
+   no shutdown
+  exit-af-interface
+  !
+  af-interface Ethernet0/1
+   summary-address 2001:AAAA:BB02::/48
+   no shutdown
+  exit-af-interface
+  !
+  af-interface Ethernet0/2
+   summary-address 2001:AAAA:BB02::/48
+   no shutdown
+  exit-af-interface
+  !
+  topology base
+  exit-af-topology
+  eigrp router-id 17.17.17.17
+ exit-address-family
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+!
+!
+!
+!
+control-plane
+!
+!
+!
+!
+!
+!
+banner motd ^C
+!--------------------------------------!
+!                                      !
+!                 STOP                 !
+!   Unauthorized entry is prohibited   !
+!                                      !
+!--------------------------------------!
+^C
+!
+line con 0
+ exec-timeout 0 0
+ password 7 01100F175804
+ logging synchronous
+ login
+line aux 0
+line vty 0 4
+ password 7 0822455D0A16
+ login
+ transport input all
+!
+!
+end
