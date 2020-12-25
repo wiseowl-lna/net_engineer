@@ -228,7 +228,9 @@ FE80::/10 - сеть для адресов link-local. Для адреса в п
     router eigrp NM_EIGRP
      address-family ipv4 autonomous-system 1
      topology base
+      ! Транслирую статический маршрут по-умолчанию в протокол EIGRP
       redistribute static
+      ! Отключила автоматическую суммаризацию маршрутов
       no auto-summary
       exit
      exit
@@ -266,25 +268,172 @@ FE80::/10 - сеть для адресов link-local. Для адреса в п
 
 Файлы с полной конфигурацией маршрутизаторов находятся в папке [configs](configs/) в файлах **_RRR-int.txt_**. Первые символы в названии файлов соответствуют именам сетевых устройств.
 
+Продолжила настройку динамического протокола EIGRP на маршрутизаторах R16, R17 и R32. Так как настройки на этих роутерах практичеки одинаковые, приведу пример настройки для маршрутизатора R16.
+
 **Маршрутизатор R16:**
 
 ----------------------------------------------------------------
     
     conf t
     !
+    router eigrp NM_EIGRP
+     address-family ipv4 autonomous-system 1
+      eigrp router-id 16.16.16.16
+      af-interface default
+       shutdown
+       exit
+    !
+      network 10.2.0.2 0.0.0.1
+      network 10.2.0.8 0.0.0.1
+      network 10.2.0.10 0.0.0.1
+      network 10.2.0.12 0.0.0.1  
+      network 192.168.2.16 0.0.0.0
+    !
+      af-interface Loopback 0
+       no shutdown
+       passive-interface
+       exit
+      af-interface ethernet 0/0
+       no shutdown
+       exit
+      af-interface ethernet 0/1
+       no shutdown
+       exit
+      af-interface ethernet 0/2
+       no shutdown
+       exit
+      af-interface ethernet 0/3
+       no shutdown
+       exit
+      exit
+    !
+
+    conf t
+    router eigrp NM_EIGRP
+     address-family ipv6 autonomous-system 1
+      eigrp router-id 16.16.16.16
+      af-interface default
+       shutdown
+       exit
+    !
+      af-interface Loopback 0
+       no shutdown
+       passive-interface
+       exit
+      af-interface ethernet 0/0
+       no shutdown
+       exit
+      af-interface ethernet 0/1
+       no shutdown
+       exit
+      af-interface ethernet 0/2
+       no shutdown
+       exit
+     af-interface ethernet 0/3
+       no shutdown
+       exit
+      exit
+    exit
+    !
+
+    conf t
+    !
+    router eigrp NM_EIGRP
+     address-family ipv4 autonomous-system 1
+     topology base
+      no auto-summary
+      exit
+     exit
+    exit
+    exit
+    !
    
 ----------------------------------------------------------------
 
-Если не указывать тип взаимодействия, то по умолчанию, на маршрутизаторах в одной зоне поднимается Level-1-2.
 
-Настроила маршрутизатор R24 в зоне 24.
+В связи с тем, что было принято решение терминировать сети пользователей на коммутаторах с использованием функций L3, приведу пример настройки коммутатора с данными функциями.
+__Примечание: В связи с тем, что на эмуляторе не работает L3 для Port-channel, перенесла настройку на interface vlan 1. 
+На Port-channel 1 оставила настройку L2 в режиме access vlan1 (настройки по-умолчанию для порта коммутатора), интерфейсы входящие в группу (Etherchannel 1) повторяют настройку Po1.
+IPv4 и IPv6 адреса с интерфейса Port-channel 1 перенесла на интерфейс Vlan1.__
 
-**Маршрутизатор R17:**
+
+
+**Коммутатор SW9:**
 
 ----------------------------------------------------------------
     
     conf t
-    !
+!
+router eigrp NM_EIGRP
+ address-family ipv4 autonomous-system 1
+  eigrp router-id 9.9.9.9
+  af-interface default
+   shutdown
+   exit
+  topology base
+   no auto-summary
+   exit
+  network 192.168.2.9 0.0.0.1
+  network 10.2.0.4 0.0.0.1
+  network 10.2.0.8 0.0.0.1
+  network 10.2.0.14 0.0.0.1
+  network 100.2.0.0 0.0.0.255
+  exit
+!
+
+  af-interface Loopback 0
+   no shutdown
+   passive-interface
+   exit
+  af-interface Vlan11
+   no shutdown
+   passive-interface
+   exit
+  af-interface ethernet 0/3
+   no shutdown
+   exit
+  af-interface ethernet 1/0
+   no shutdown
+   exit
+  af-interface Vlan1
+   no shutdown
+   exit
+  exit
+ exit
+exit 
+!
+
+conf t
+!
+router eigrp NM_EIGRP
+ address-family ipv6 autonomous-system 1
+  eigrp router-id 9.9.9.9
+  af-interface default
+   shutdown
+   exit
+  exit
+!
+  af-interface Loopback 0
+   no shutdown
+   passive-interface
+   exit
+  af-interface Vlan11
+   no shutdown
+   passive-interface
+   exit
+  af-interface ethernet 0/3
+   no shutdown
+   exit
+  af-interface ethernet 1/0
+   no shutdown
+   exit
+  af-interface Vlan1
+   no shutdown
+   exit
+  exit
+ exit
+exit
+
     
 
 ----------------------------------------------------------------
