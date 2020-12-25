@@ -137,8 +137,6 @@ FE80::/10 - сеть для адресов link-local. Для адреса в п
     |--------------|------------|------------|----------------|-----------------|-------------------------------|---------------------------|----------------------|
     
 
-
-
 #### **_II. Настройка сетевого оборудования._**
 
 Основными преимуществами EIGRP являются:
@@ -155,13 +153,107 @@ FE80::/10 - сеть для адресов link-local. Для адреса в п
 **Маршрутизатор R18:**
 
 ---------------------------------------------------------------
-        
-    ! Создала процесс ISIS.
+
+    ! Статический маршрут по-умолчанию для IPv4 иIPv6.
     conf t
     !
- 
- 
+    ip route 0.0.0.0 0.0.0.0 10.5.0.6
+    ip route 0.0.0.0 0.0.0.0 10.5.0.14
+    !
+    ipv6 route ::/0 ethernet 0/2
+    ipv6 route ::/0 ethernet 0/3
+    !
+
+    ! Создала процесс EIGRP.
+    !
+    router eigrp NM_EIGRP
+     ! Переходжу в этот режим конфигурации address-family для протокола IPv4 при помощи следующей команды
+     address-family ipv4 autonomous-system 1
+      ! Указываю идентификатор маршрутизатора В процессе EIGRP
+      eigrp router-id 18.18.18.18
+      ! Перевела все интервейсы которые будут участвовать в процессе EIGRP в состояние shutdown
+      af-interface default
+       shutdown
+       exit
+       
+      ! Объявила сети, которые будут участвовать в процессе
+      network 192.168.2.18 0.0.0.0
+      network 10.2.0.0 0.0.0.1
+      network 10.2.0.2 0.0.0.1
+      !
+      ! Настроила интерфейсы, участвующие в процессе
+      af-interface Loopback 0
+       no shutdown
+       ! Перевожу интерфейс в пассивное состояние (по-умолчанию активно)
+       passive-interface
+       exit
+      af-interface ethernet 0/0
+       no shutdown
+       exit
+      af-interface ethernet 0/1
+       no shutdown
+       exit
+      exit
+     exit 
+     exit
+     !
+     
+    ! Настройки для протокола IPv6 в EIGRP аналогичны IPv4/
+    conf t
+    router eigrp NM_EIGRP
+     address-family ipv6 autonomous-system 1
+      eigrp router-id 18.18.18.18
+      af-interface default
+       shutdown
+       exit
+    !
+      af-interface Loopback 0
+       no shutdown
+       passive-interface
+       exit
+      af-interface ethernet 0/0
+       no shutdown
+       exit
+      af-interface ethernet 0/1
+       no shutdown
+       exit
+      exit
+    exit
+
+    Так как необходимо передавать маршрут по-умолчанию всем роутерам в нашей автономеной системе, сделала следующие настройки.
+    В EIGRP маршрут по-умолчанию можно передать с помощью редистрибьюции в разделе topology base.
+    
+    conf t
+    !
+    router eigrp NM_EIGRP
+     address-family ipv4 autonomous-system 1
+     topology base
+      redistribute static
+      no auto-summary
+      exit
+     exit
+     address-family ipv6 autonomous-system 1
+     topology base
+      redistribute static
+      exit
+     exit
+    exit
+    exit
+    !
+    
 --------------------------------------------------------------
+
+Закончила настройки маршрутизатора R18 и очень хочется посмотреть что получилось. Ввела команду **__sh ip eigrp topology__** (вывод на рис.1) и эту же команду для IPv6 **__sh ipv6 eigrp topology__** (вывод на рис.2).
+
+Рисунок 1.
+
+![](Topology_IPv4_18.png)
+
+Рисунок 2.
+
+![](Topology_IPv6_18.png)
+
+
 
 Файлы с полной конфигурацией маршрутизаторов находятся в папке [configs](configs/) в файлах **_RRR-int.txt_**. Первые символы в названии файлов соответствуют именам сетевых устройств.
 
