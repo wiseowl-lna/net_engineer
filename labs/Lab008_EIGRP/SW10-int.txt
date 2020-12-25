@@ -1,0 +1,205 @@
+Building configuration...
+
+Current configuration : 3307 bytes
+!
+! Last configuration change at 22:01:49 EET Thu Dec 24 2020
+!
+version 15.2
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+service compress-config
+!
+hostname SW10
+!
+boot-start-marker
+boot-end-marker
+!
+!
+enable secret 5 $1$gKZw$YVBuqWxQzIn9ihgdWrDuK.
+!
+no aaa new-model
+clock timezone EET 2 0
+!
+!
+!
+!
+!
+!
+!
+!
+no ip domain-lookup
+ip cef
+ipv6 unicast-routing
+ipv6 cef
+!
+!
+spanning-tree mode pvst
+spanning-tree extend system-id
+!
+vlan internal allocation policy ascending
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 192.168.2.10 255.255.255.255
+ ipv6 address 2001:AAAA:BB02:192::10C/64
+!
+interface Port-channel1
+!
+interface Ethernet0/0
+ channel-group 1 mode active
+!
+interface Ethernet0/1
+ channel-group 1 mode active
+!
+interface Ethernet0/2
+ switchport access vlan 12
+ switchport mode access
+!
+interface Ethernet0/3
+ no switchport
+ ip address 10.2.0.11 255.255.255.254
+ duplex auto
+ ipv6 address FE80::10C:E3 link-local
+ ipv6 address 2001:AAAA:BB02:110::11:E3/64
+!
+interface Ethernet1/0
+ no switchport
+ ip address 10.2.0.7 255.255.255.254
+ duplex auto
+ ipv6 address FE80::10C:E10 link-local
+ ipv6 address 2001:AAAA:BB02:106::7:E10/64
+!
+interface Ethernet1/1
+!
+interface Ethernet1/2
+!
+interface Ethernet1/3
+!
+interface Vlan1
+ ip address 10.2.0.15 255.255.255.254
+ ipv6 address FE80::10C:C1 link-local
+ ipv6 address 2001:AAAA:BB02:114::15:C1/64
+!
+interface Vlan12
+ ip address 100.2.1.1 255.255.255.0
+ ipv6 address 2001:AAAA:BB02:1012::1/64
+!
+!
+router eigrp NM_EIGRP
+ !
+ address-family ipv4 unicast autonomous-system 1
+  !
+  af-interface default
+   shutdown
+  exit-af-interface
+  !
+  af-interface Loopback0
+   no shutdown
+   passive-interface
+  exit-af-interface
+  !
+  af-interface Ethernet0/3
+   no shutdown
+  exit-af-interface
+  !
+  af-interface Ethernet1/0
+   no shutdown
+  exit-af-interface
+  !
+  af-interface Vlan1
+   no shutdown
+  exit-af-interface
+  !
+  af-interface Vlan12
+   no shutdown
+   passive-interface
+  exit-af-interface
+  !
+  topology base
+  exit-af-topology
+  network 10.2.0.6 0.0.0.1
+  network 10.2.0.10 0.0.0.1
+  network 10.2.0.14 0.0.0.1
+  network 100.2.1.0 0.0.0.255
+  network 192.168.2.10 0.0.0.1
+  eigrp router-id 10.10.10.10
+ exit-address-family
+ !
+ address-family ipv6 unicast autonomous-system 1
+  !
+  af-interface default
+   shutdown
+  exit-af-interface
+  !
+  af-interface Loopback0
+   no shutdown
+   passive-interface
+  exit-af-interface
+  !
+  af-interface Ethernet0/3
+   no shutdown
+  exit-af-interface
+  !
+  af-interface Ethernet1/0
+   no shutdown
+  exit-af-interface
+  !
+  af-interface Vlan1
+   no shutdown
+  exit-af-interface
+  !
+  af-interface Vlan12
+   no shutdown
+   passive-interface
+  exit-af-interface
+  !
+  topology base
+  exit-af-topology
+  eigrp router-id 10.10.10.10
+ exit-address-family
+!
+ip forward-protocol nd
+!
+no ip http server
+no ip http secure-server
+!
+!
+!
+!
+!
+!
+control-plane
+!
+banner motd ^C
+!--------------------------------------!
+!                                      !
+!                 STOP                 !
+!   Unauthorized entry is prohibited   !
+!                                      !
+!--------------------------------------!
+^C
+!
+line con 0
+ exec-timeout 0 0
+ password 7 110A1016141D
+ logging synchronous
+ login
+line aux 0
+line vty 0 4
+ password 7 1511021F0725
+ login
+!
+!
+end
