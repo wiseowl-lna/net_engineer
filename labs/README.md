@@ -8,4 +8,4 @@
 6. [OSPF. Фильтрация](Lab006_OSPF/).
 7. [IS-IS](Lab007_ISIS/).
 8. [EIGRP](Lab008_EIGRP/).
-9. [BGP](Lab009_BGP/).
+9. [BGP. Основы](Lab009_BGP/).
