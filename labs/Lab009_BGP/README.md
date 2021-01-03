@@ -387,6 +387,50 @@ BGP это path-vector протокол с такими общими харак�
 
 ![](Summary_IPV6_1_R18.png)
 
+Для анонсирования необходимых сетей на граничном маршрутизаторе R18 в Санкт Петербурге воспользуюсь перераспределением (redistribute) сетей из протокола EIGRP в протокол BGP.
+Для этого использую команду **__redistribute__**, а так же, создала route-map и prefix-list. Настройка маршрутизатора приведена ниже.
+
+**Маршрутизатор R18:**
+
+----------------------------------------------------------------
+    
+    conf t
+    !
+    ip prefix-list LOCAL_OFFICE_NET seq 5 permit 100.2.0.0/23 le 24
+    ip prefix-list LOCAL_OFFICE_NET seq 10 deny 0.0.0.0/0 ge 1
+    !
+    ipv6 prefix-list LOCAL_OFFICE_NET_IPV6 seq 10 permit 2001:AAAA:BB02::/48
+    ipv6 prefix-list LOCAL_OFFICE_NET_IPV6 seq 30 deny ::/0
+    !
+    route-map FROM_EIGRP permit 10
+     match ip address prefix-list LOCAL_OFFICE_NET
+    !
+    route-map FROM_EIGRP_RPV6 permit 10 
+     match ip address prefix-list LOCAL_OFFICE_NET_IPV6
+    !
+    router bgp 2042
+     address-family ipv4
+      redistribute eigrp 1 route-map FROM_EIGRP
+     address-family ipv6
+      redistribute eigrp 1 route-map FROM_EIGRP_RPV6
+      exit
+     exit
+    exit
+    !
+    
+----------------------------------------------------------------
+
+Для проверки наличия маршрутов на R14 в офисе Москва ввела команду **__sh ip bgp__** (для IPv4) и **_sh bgp ipv6 unicast_** (рис.9).
+
+Рисунок 6.
+
+![](Summary_IPV4_1_R14.png)
+
+![](Summary_IPV6_1_R14.png)
+
+
+
+
 
 
 
