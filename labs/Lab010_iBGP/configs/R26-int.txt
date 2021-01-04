@@ -1,0 +1,175 @@
+Building configuration...
+
+Current configuration : 2977 bytes
+!
+! Last configuration change at 12:19:32 EET Sun Jan 3 2021
+version 15.2
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+!
+hostname R26
+!
+boot-start-marker
+boot-end-marker
+!
+!
+enable secret 5 $1$akcV$atnCVFTozLJTXiRI/wBB8/
+!
+no aaa new-model
+clock timezone EET 2 0
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+!
+!
+!
+
+
+!
+!
+!
+!
+no ip domain lookup
+ip cef
+ipv6 unicast-routing
+ipv6 cef
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+!
+!
+!
+!
+redundancy
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 192.168.5.26 255.255.255.255
+ ip router isis
+ ipv6 address 2001:AAAA:BB05:192::26/128
+ ipv6 router isis
+!
+interface Ethernet0/0
+ ip address 10.5.0.5 255.255.255.254
+ ip router isis
+ ipv6 address FE80::26:E0 link-local
+ ipv6 address 2001:AAAA:BB05:104::5:E0/64
+ ipv6 router isis
+!
+interface Ethernet0/1
+ ip address 10.5.0.16 255.255.255.254
+ ipv6 address FE80::26:E1 link-local
+ ipv6 address 2001:AAAA:BB05:116::16:E1/64
+!
+interface Ethernet0/2
+ ip address 10.5.0.9 255.255.255.254
+ ip router isis
+ ipv6 address FE80::26:E2 link-local
+ ipv6 address 2001:AAAA:BB05:108::9:E2/64
+ ipv6 router isis
+!
+interface Ethernet0/3
+ ip address 10.5.0.14 255.255.255.254
+ ipv6 address FE80::26:E3 link-local
+ ipv6 address 2001:AAAA:BB05:114::14:E3/64
+!
+interface Ethernet1/0
+ no ip address
+ shutdown
+!
+interface Ethernet1/1
+ no ip address
+ shutdown
+!
+interface Ethernet1/2
+ no ip address
+ shutdown
+!
+interface Ethernet1/3
+ no ip address
+ shutdown
+!
+router isis
+ net 49.0026.0026.0026.0026.00
+!
+router bgp 520
+ bgp router-id 26.26.26.26
+ bgp log-neighbor-changes
+ neighbor 10.5.0.4 remote-as 520
+ neighbor 10.5.0.15 remote-as 2042
+ neighbor 2001:AAAA:BB05:104::4:E1 remote-as 520
+ neighbor 2001:AAAA:BB05:114::15:E3 remote-as 2042
+ !
+ address-family ipv4
+  neighbor 10.5.0.4 activate
+  neighbor 10.5.0.15 activate
+  no neighbor 2001:AAAA:BB05:104::4:E1 activate
+  no neighbor 2001:AAAA:BB05:114::15:E3 activate
+ exit-address-family
+ !
+ address-family ipv6
+  neighbor 2001:AAAA:BB05:104::4:E1 activate
+  neighbor 2001:AAAA:BB05:114::15:E3 activate
+ exit-address-family
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+ip route 10.5.0.12 255.255.255.254 10.5.0.8 name To_Labytnangi
+ip route 100.3.0.0 255.255.254.0 10.5.0.17 name To_Chokurdah
+!
+ipv6 route 2001:AAAA:BB03::/48 2001:AAAA:BB05:116::17:E0 name To_Chokurdah
+ipv6 route 2001:AAAA:BB05:112::/64 2001:AAAA:BB05:108::8:E2 name To_Labytnangi
+!
+!
+!
+control-plane
+!
+!
+!
+!
+!
+!
+banner motd ^C
+!--------------------------------------!
+!                                      !
+!                 STOP                 !
+!   Unauthorized entry is prohibited   !
+!                                      !
+!--------------------------------------!
+^C
+!
+line con 0
+ exec-timeout 0 0
+ password 7 030752180500
+ logging synchronous
+ login
+line aux 0
+line vty 0 4
+ password 7 13061E010803
+ login
+ transport input all
+!
+!
+end
