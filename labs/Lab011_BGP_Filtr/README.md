@@ -327,34 +327,54 @@ FE80::/10 - сеть для адресов link-local. Для адреса в п
 
 Для чистоты эксперимента удалила на маршрутизаторе R14 статический маршрут по-умолчанию, а на маршрутизаторе R15 разорвала связь с провайдером Ламас.
 
-После этого запустила **_trace 100.2.1.5 -P 1_** c компьютера VPC1 (100.1.0.4) на компьютер VPC (100.2.1.5) и увидела, что трафик идет через провайдера Киторн (рис.3).
+Проверила, какие мршруты появляются в таблице маршрутизации и таблице BGP, для этого использовала команды **_sh ip route bgp_**,  **_sh ip bgp_** для IPv4 и **_sh ipv6 route bgp_**, **_sh bgp ipv6 unicast_** для IPv6. Вывод команд на рисунке 7.
 
-Рисунок 3.
+Рисунок 7.
 
-![](Trace_VPC1_VPC.png)
+![](Sh_ip_route_bgp_1_R14.png)
+![](Sh_ip_bgp_1_R14.png)
+![](Sh_ipv6_route_bgp_1_IPv6_R14.png)
+![](Sh_bgp_ipv6_unicast_1_R14.png)
 
-Теперь верну настройки на R15 в исходное состояние и настрою маршрутизатор R14.
+На рисунке вижу, что маршрутизатор R14 получает маршруты до разных офисов через автономную систему 101.
 
-**Маршрутизатор R14:**
+Настрою фильтрацию на маршрутизаторе R22 (Киторн). Для этого использовала Prefix-list и команды neighbor default-originate, которая не добавляет маршрут по умолчанию в локальную таблицу BGP, но анонсирует маршрут соседям. 
+
+**Маршрутизатор R22:**
 
 ---------------------------------------------------------------
 
     conf t
     !
-    router ospf 10
-     default-information originate metric 20
+    ip prefix-list DENY_ALL_NET_IPV4 seq 5 deny 0.0.0.0/0
+    !
+    ipv6 prefix-list DENY_ALL_NET_IPV6 seq 5 deny ::/0
+    !
+    router bgp 101
+     address-family ipv4
+      neighbor 10.0.0.1 default-originate
+      neighbor 10.0.0.1 prefix-list DENY_ALL_NET_IPV4 out
+      exit
+     !
+     address-family ipv6
+      neighbor 2001:AAAA:BB00:100::1:E2 default-originate
+      neighbor 2001:AAAA:BB00:100::1:E2 prefix-list DENY_ALL_NET_IPV6 out
+      exit
      exit
-    ipv6 router ospf 10
-     default-information originate metric 20
-     exit
+    exit 
 
 --------------------------------------------------------------
 
-Проверю куда теперь направляется трафик (рис.4).
+После настройки фильтра снова проверила таблицы маршрутизации. Команды **_sh ip route bgp_**,  **_sh ip bgp_** для IPv4 и **_sh ipv6 route bgp_**, **_sh bgp ipv6 unicast_** для IPv6. Вывод команд на рис.8 частичный.
 
-Рисунок 4.
+Рисунок 8.
 
-![](Trace2_VPC1_VPC.png)
+![](Sh_ip_route_bgp_2_R14.png)
+![](Sh_ip_bgp_2_R14.png)
+![](Sh_ipv6_route_bgp_2_IPv6_R14.png)
+![](Sh_bgp_ipv6_unicast_2_R14.png)
+
+
 
 Трафик, как и сказано в условии лабораторной работы, направляется через провайдера Ламас.
 
