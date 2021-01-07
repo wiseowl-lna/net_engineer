@@ -206,7 +206,9 @@ FE80::/10 - сеть для адресов link-local. Для адреса в п
 
 В данном разделе настроила на роутерах настройка фильтрацию для офисов Москва и Санкт Петербург как для IPv4, так и IPv6. Ниже привела команды для настройки маршрутизаторов.
 
-1. Для того, что бы избежать ситуации, когда клиент может стать транзитной AS из-за того, что он анонсирует сети провайдеров друг другу, необходимо фильтровать трафик таким образом, чтобы провайдерам анонсировались только сети клиента. В этом случае правилом может быть: анонсировать только сети с пустым значением AS path (локальные сети клиента).
+**_1. Настроила фильтрацию в офисе Москва так, чтобы не появилось транзитного трафика(As-path)._**
+
+Для того, что бы избежать ситуации, когда клиент может стать транзитной AS из-за того, что он анонсирует сети провайдеров друг другу, необходимо фильтровать трафик таким образом, чтобы провайдерам анонсировались только сети клиента. В этом случае правилом может быть: анонсировать только сети с пустым значением AS path (локальные сети клиента).
  
 До применения фильтра, проверила какие префиксы прилетают на маршрутизатор R21 (Ламас) - команда **_sh ip bgp_** для IPv4, и маршрутизатор R22 (Киторн) - команда **_show bgp ipv6 unicast_** для IPv6). Вывод на рисунках 1 и 2.
 
@@ -249,7 +251,7 @@ FE80::/10 - сеть для адресов link-local. Для адреса в п
 На рисунках вижу, что сквозного маршрута через австономную систему 1001 нет.
 
 
-2. Настройка фильтрации в офисе Санкт Петербург так, чтобы не появилось транзитного трафика (Prefix-list).
+**_2. Настройка фильтрации в офисе Санкт Петербург так, чтобы не появилось транзитного трафика (Prefix-list)._**
 
 До настройки фильтра, был поставлен научный эксперимент, в котором участвовали роутеры R23-R26 (Триада) и R18 (Санкт Петербург).
 Задача эксперимента: получить транзитный трафик на роутере офиса Санкт Петербург.
@@ -285,46 +287,29 @@ FE80::/10 - сеть для адресов link-local. Для адреса в п
 
     conf t
     !
-    router bgp 520
-     bgp router-id 24.24.24.24
-     neighbor 192.168.5.23 remote-as 520
-     neighbor 192.168.5.23 update-source Loopback 0
-     neighbor 192.168.5.25 remote-as 520
-     neighbor 192.168.5.25 update-source Loopback 0
-     neighbor 192.168.5.26 remote-as 520
-     neighbor 192.168.5.26 update-source Loopback 0
-     neighbor 2001:AAAA:BB05:192::23 remote-as 520
-     neighbor 2001:AAAA:BB05:192::23 update-source Loopback 0
-     neighbor 2001:AAAA:BB05:192::25 remote-as 520
-     neighbor 2001:AAAA:BB05:192::25 update-source Loopback 0
-     neighbor 2001:AAAA:BB05:192::26 remote-as 520
-     neighbor 2001:AAAA:BB05:192::26 update-source Loopback 0 
-     address-family ipv4
-      neighbor 192.168.5.23 activate
-      neighbor 192.168.5.25 activate
-      neighbor 192.168.5.26 activate
-      neighbor 192.168.5.23 next-hop-self
-      neighbor 192.168.5.25 next-hop-self
-      neighbor 192.168.5.26 next-hop-self
-      exit
-     address-family ipv6
-      neighbor 2001:AAAA:BB05:192::23 activate
-      neighbor 2001:AAAA:BB05:192::25 activate
-      neighbor 2001:AAAA:BB05:192::26 activate
-      neighbor 2001:AAAA:BB05:192::23 next-hop-self
-      neighbor 2001:AAAA:BB05:192::25 next-hop-self
-      neighbor 2001:AAAA:BB05:192::26 next-hop-self
+    ip prefix-list OUT_TRAFIC_IPV4 seq 5 permit 100.2.0.0/23
+    ipv6 prefix-list OUT_TRAFIC_IPV6 seq 5 permit 2001:AAAA:BB02::/48
+    !
+    router bgp 2042
+      address-family ipv4
+       neighbor 10.5.0.6 prefix-list OUT_TRAFIC_IPV4 out
+       neighbor 10.5.0.14 prefix-list OUT_TRAFIC_IPV4 out
+       exit
+      address-family ipv6
+       neighbor 2001:AAAA:BB05:106::6:E3 prefix-list OUT_TRAFIC_IPV6 out
+       neighbor 2001:AAAA:BB05:114::14:E3 prefix-list OUT_TRAFIC_IPV6 out
       exit
      exit
-    exit  
+    exit
 
 --------------------------------------------------------------
 
-Теперь снова введу команды **_sh ip bgp summary_** для IPv4 и **_show bgp ipv6 unicast summary_** для IPv6 на маршрутизаторе R24 (рис.2) и посмотрю результаты вывода.
+Для проверки работы фильтров введу команды **_show ip bgp neighbors 10.5.0.14 advertised-routes_** для IPv4 и **_show bgp ipv6 unicast neighbors 2001:AAAA:BB05:106::6:E3 advertised-routes_** для IPv6 на маршрутизаторе R18 (рис.5) и посмотрю результаты вывода.
 
-Рисунок 2.
+Рисунок 5.
 
-![](Neighbor_R24_R23_R25_R26.png)
+![](Prefix_2_R18.png)
+![](Prefix_2_R18_IPV6.png)
 
 А в результате вывода вижу, что маршрутизатор R24 считает своим "соседом" маршрутизатор R25 (192.168.5.25), хотя физическими линками они не связаны.
 Аналогичная картина наблюдается и на остальных маршрутизаторах в зоне Триада.
