@@ -206,7 +206,7 @@ FE80::/10 - сеть для адресов link-local. Для адреса в п
 
 В данном разделе настроила на роутерах настройка фильтрацию для офисов Москва и Санкт Петербург как для IPv4, так и IPv6. Ниже привела команды для настройки маршрутизаторов.
 
-**_1. Настроила фильтрацию в офисе Москва так, чтобы не появилось транзитного трафика(As-path)._**
+**_1. Настроила фильтрацию в офисе Москва так, чтобы не появилось транзитного трафика (As-path)._**
 
 Для того, что бы избежать ситуации, когда клиент может стать транзитной AS из-за того, что он анонсирует сети провайдеров друг другу, необходимо фильтровать трафик таким образом, чтобы провайдерам анонсировались только сети клиента. В этом случае правилом может быть: анонсировать только сети с пустым значением AS path (локальные сети клиента).
  
@@ -332,15 +332,19 @@ FE80::/10 - сеть для адресов link-local. Для адреса в п
 Рисунок 7.
 
 *_sh ip route bgp_*
+
 ![](Sh_ip_route_bgp_1_R14.png)
 
 *_sh ip bgp_*
+
 ![](Sh_ip_bgp_1_R14.png)
 
 *_sh ipv6 route bgp_*
+
 ![](Sh_ipv6_route_bgp_1_IPv6_R14.png)
 
 *_sh bgp ipv6 unicast_*
+
 ![](Sh_bgp_ipv6_unicast_1_R14.png)
 
 На рисунке вижу, что маршрутизатор R14 получает маршруты до разных офисов через автономную систему 101.
@@ -377,6 +381,7 @@ FE80::/10 - сеть для адресов link-local. Для адреса в п
 Рисунок 8.
 
 *_sh ip route bgp_*
+
 ![](Sh_ip_route_bgp_2_R14.png)
 
 *_sh ip bgp_*
@@ -384,9 +389,11 @@ FE80::/10 - сеть для адресов link-local. Для адреса в п
 ![](Sh_ip_bgp_2_R14.png)
 
 *_sh ipv6 route bgp_*
+
 ![](Sh_ipv6_route_bgp_2_IPv6_R14.png)
 
 *_sh bgp ipv6 unicast_*
+
 ![](Sh_bgp_ipv6_unicast_2_R14.png)
 
 На данном рисунке видно, что в таблицах маршрутизации только маршрут по-умолчанию и локальные маршруты.
@@ -407,6 +414,7 @@ FE80::/10 - сеть для адресов link-local. Для адреса в п
 Рисунок 10.
 
 *_sh ip route bgp_*
+
 ![](Sh_ip_route_bgp_1_R15.png)
 
 *_sh ip bgp_*
@@ -414,28 +422,40 @@ FE80::/10 - сеть для адресов link-local. Для адреса в п
 ![](Sh_ip_bgp_1_R15.png)
 
 *_sh ipv6 route bgp_*
+
 ![](Sh_ipv6_route_bgp_1_IPv6_R15.png)
 
 *_sh bgp ipv6 unicast_*
+
 ![](Sh_bgp_ipv6_unicast_1_R15.png)
 
+Настроила фильтры на маршрутизаторе R21 (Ламас) так, чтобы в офис Москва отдавался маршрут по-умолчанию и префиксы офиса Санкт Петербург. Для этого использовала Prefix-list и команду neighbor default-originate, а так же as-path access-list в которой можно указывать какие номера автономных систем должны или не должны встречаться в маршруте.
 
-
-
-Настроила маршрутизатор R18 в офисе Санкт Петербург так, чтобы трафик распределялся по двум линкам одновременно, помощью команды **_maximum-paths \<n>_** указав количество разрешенных маршрутов.
-
-**Маршрутизатор R18:**
+**Маршрутизатор R21:**
 
 ---------------------------------------------------------------
 
     conf t
     !
-    router bgp 2042
+    ip as-path access-list 1 permit _2042$
+    ip as-path access-list 1 deny .*
+    !
+    ip prefix-list DENY_ALL_NET_IPV4 seq 5 permit 100.2.0.0/23
+    ip prefix-list DENY_ALL_NET_IPV4 seq 10 deny 0.0.0.0/0
+    !
+    ipv6 prefix-list DENY_ALL_NET_IPV6 seq 5 permit 2001:AAAA:BB02::/48
+    ipv6 prefix-list DENY_ALL_NET_IPV6 seq 10 deny ::/0
+    !
+    router bgp 301
      address-family ipv4
-      maximum-paths 2
+      neighbor 10.6.0.1 default-originate
+      neighbor 10.6.0.1 filter-list 1 out
+      neighbor 10.6.0.1 prefix-list DENY_ALL_NET_IPV4 out
       exit
      address-family ipv6
-      maximum-paths 2
+      neighbor 2001:AAAA:BB06:100::1:E2 default-originate
+      neighbor 2001:AAAA:BB06:100::1:E2 filter-list 1 out
+      neighbor 2001:AAAA:BB06:100::1:E2 prefix-list DENY_ALL_NET_IPV6 out
       exit
      exit
     exit
@@ -444,12 +464,25 @@ FE80::/10 - сеть для адресов link-local. Для адреса в п
 
 Для проверки ввела команды **_sh ip bgp summary_** для IPv4 и **_sh bgp ipv6 unicast_** для IPv6 на R2 (рис.4).
 
-Рисунок 4.
+Рисунок 11.
 
-![](Multipath_R18_IPv4.png)
-![](Multipath_R18_IPv6.png)
+*_sh ip route bgp_*
 
-Вижу, что маршруты к объявленным сетям прилетают по двум линкам одновременно.
+![](Sh_ip_route_bgp_2_R15.png)
+
+*_sh ip bgp_*
+
+![](Sh_ip_bgp_2_R15.png)
+
+*_sh ipv6 route bgp_*
+
+![](Sh_ipv6_route_bgp_2_IPv6_R15.png)
+
+*_sh bgp ipv6 unicast_*
+
+![](Sh_bgp_ipv6_unicast_2_R15.png)
+
+Из вывода команд видно, что цель достигнута. В офис Москва прилетают только прафиксы Санкт Петербурга и маршрут по-умолчанию от провайдера Ламас.
 
 
 5. Все сети в лабораторной работе должны иметь IP связность.
