@@ -330,12 +330,16 @@ FE80::/10 - сеть для адресов link-local. Для адреса в п
 Проверила, какие мршруты появляются в таблице маршрутизации и таблице BGP, для этого использовала команды **_sh ip route bgp_**,  **_sh ip bgp_** для IPv4 и **_sh ipv6 route bgp_**, **_sh bgp ipv6 unicast_** для IPv6. Вывод команд на рисунке 7.
 
 Рисунок 7.
+
 *_sh ip route bgp_*
 ![](Sh_ip_route_bgp_1_R14.png)
+
 *_sh ip bgp_*
 ![](Sh_ip_bgp_1_R14.png)
+
 *_sh ipv6 route bgp_*
 ![](Sh_ipv6_route_bgp_1_IPv6_R14.png)
+
 *_sh bgp ipv6 unicast_*
 ![](Sh_bgp_ipv6_unicast_1_R14.png)
 
@@ -371,12 +375,16 @@ FE80::/10 - сеть для адресов link-local. Для адреса в п
 После настройки фильтра снова проверила таблицы маршрутизации. Команды **_sh ip route bgp_**,  **_sh ip bgp_** для IPv4 и **_sh ipv6 route bgp_**, **_sh bgp ipv6 unicast_** для IPv6. Вывод команд на рис.8 частичный.
 
 Рисунок 8.
+
 *_sh ip route bgp_*
 ![](Sh_ip_route_bgp_2_R14.png)
+
 *_sh ip bgp_*
 ![](Sh_ip_bgp_2_R14.png)
+
 *_sh ipv6 route bgp_*
 ![](Sh_ipv6_route_bgp_2_IPv6_R14.png)
+
 *_sh bgp ipv6 unicast_*
 ![](Sh_bgp_ipv6_unicast_2_R14.png)
 
@@ -396,12 +404,16 @@ FE80::/10 - сеть для адресов link-local. Для адреса в п
 Сделала предварительные проверки наличия маршрутов на роутере R15 рис.10. 
 
 Рисунок 10.
+
 *_sh ip route bgp_*
 ![](Sh_ip_route_bgp_1_R15.png)
+
 *_sh ip bgp_*
 ![](Sh_ip_bgp_1_R15.png)
+
 *_sh ipv6 route bgp_*
 ![](Sh_ipv6_route_bgp_1_IPv6_R15.png)
+
 *_sh bgp ipv6 unicast_*
 ![](Sh_bgp_ipv6_unicast_1_R15.png)
 
