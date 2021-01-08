@@ -410,6 +410,7 @@ FE80::/10 - сеть для адресов link-local. Для адреса в п
 ![](Sh_ip_route_bgp_1_R15.png)
 
 *_sh ip bgp_*
+
 ![](Sh_ip_bgp_1_R15.png)
 
 *_sh ipv6 route bgp_*
