@@ -105,6 +105,7 @@ router ospf 10
  default-information originate
 !
 router bgp 1001
+ bgp default local-preference 500
  bgp router-id 15.15.15.15
  bgp log-neighbor-changes
  neighbor 10.6.0.0 remote-as 301
