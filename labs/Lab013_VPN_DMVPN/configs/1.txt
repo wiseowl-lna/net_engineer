@@ -1,0 +1,228 @@
+Building configuration...
+
+Current configuration : 3933 bytes
+!
+! No configuration change since last restart
+version 15.2
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+!
+hostname R12
+!
+boot-start-marker
+boot-end-marker
+!
+!
+enable secret 5 $1$KWNQ$PazRq9AjdPuKbvi4jPZQb0
+!
+no aaa new-model
+clock timezone EET 3 0
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+fhrp version vrrp v3
+!
+!
+!
+!
+
+
+!
+ip dhcp excluded-address 100.1.0.1 100.1.0.5
+ip dhcp excluded-address 100.1.1.1 100.1.1.5
+ip dhcp excluded-address 100.1.0.128 100.1.0.255
+ip dhcp excluded-address 100.1.1.128 100.1.1.255
+!
+ip dhcp pool USERS_NET_1_0
+ network 100.1.0.0 255.255.255.0
+ default-router 100.1.0.1
+ domain-name twelve.lab.com
+ lease 0 0 10
+!
+ip dhcp pool USERS_NET_1_1
+ network 100.1.1.0 255.255.255.0
+ default-router 100.1.1.1
+ domain-name twelve.lab.com
+ lease 0 0 10
+!
+!
+!
+no ip domain lookup
+ip cef
+ipv6 unicast-routing
+ipv6 cef
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+!
+!
+!
+!
+redundancy
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 192.168.1.12 255.255.255.255
+ ip ospf 10 area 10
+ ipv6 address 2001:AAAA:BB01:192::12/128
+ ipv6 ospf 10 area 10
+!
+interface Ethernet0/0
+ no ip address
+!
+interface Ethernet0/0.10
+ description MGMT_SWITCH
+ encapsulation dot1Q 10
+ ip address 172.16.1.2 255.255.255.0
+ ip ospf 10 area 10
+ ipv6 address 2001:AAAA:BB01:172::2/64
+ ipv6 ospf 10 area 10
+ vrrp 10 address-family ipv4
+  priority 254
+  address 172.16.1.1 primary
+  exit-vrrp
+ vrrp 11 address-family ipv6
+  priority 254
+  address FE80::12:1 primary
+  address 2001:AAAA:BB01:172::1/64
+  exit-vrrp
+!
+interface Ethernet0/0.11
+ description Users_Net_0
+ encapsulation dot1Q 11
+ ip address 100.1.0.2 255.255.255.0
+ ip ospf 10 area 10
+ ipv6 address 2001:AAAA:BB01:1011::2/64
+ ipv6 ospf 10 area 10
+ vrrp 12 address-family ipv4
+  priority 254
+  address 100.1.0.1 primary
+  exit-vrrp
+ vrrp 13 address-family ipv6
+  priority 254
+  address FE80::12:1 primary
+  address 2001:AAAA:BB01:1011::1/64
+  exit-vrrp
+!
+interface Ethernet0/0.12
+ description Users_Net_1
+ encapsulation dot1Q 12
+ ip address 100.1.1.2 255.255.255.0
+ ip ospf 10 area 10
+ ipv6 address 2001:AAAA:BB01:1012::2/64
+ ipv6 ospf 10 area 10
+ vrrp 14 address-family ipv4
+  priority 254
+  address 100.1.1.1 primary
+  exit-vrrp
+ vrrp 15 address-family ipv6
+  priority 254
+  address FE80::12:1 primary
+  address 2001:AAAA:BB01:1012::1/64
+  exit-vrrp
+!
+interface Ethernet0/1
+ ip address 10.1.0.12 255.255.255.254
+ ip ospf 10 area 10
+ ipv6 address FE80::12:E1 link-local
+ ipv6 address 2001:AAAA:BB01:112::12:E1/64
+ ipv6 ospf 10 area 10
+!
+interface Ethernet0/2
+ ip address 10.1.0.3 255.255.255.254
+ ip ospf 10 area 0
+ ipv6 address FE80::12:E2 link-local
+ ipv6 address 2001:AAAA:BB01:102::3:E2/64
+ ipv6 ospf 10 area 0
+!
+interface Ethernet0/3
+ ip address 10.1.0.7 255.255.255.254
+ ip ospf 10 area 0
+ ipv6 address FE80::12:E3 link-local
+ ipv6 address 2001:AAAA:BB01:106::7:E3/64
+ ipv6 ospf 10 area 0
+!
+interface Ethernet1/0
+ no ip address
+ shutdown
+!
+interface Ethernet1/1
+ no ip address
+ shutdown
+!
+interface Ethernet1/2
+ no ip address
+ shutdown
+!
+interface Ethernet1/3
+ no ip address
+ shutdown
+!
+router ospf 10
+ router-id 12.12.12.12
+ passive-interface default
+ no passive-interface Ethernet0/1
+ no passive-interface Ethernet0/2
+ no passive-interface Ethernet0/3
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+!
+ipv6 router ospf 10
+ router-id 12.12.12.12
+!
+!
+!
+!
+control-plane
+!
+!
+!
+!
+!
+!
+banner motd ^C
+!--------------------------------------!
+!                                      !
+!                 STOP                 !
+!   Unauthorized entry is prohibited   !
+!                                      !
+!--------------------------------------!
+^C
+!
+line con 0
+ exec-timeout 0 0
+ password 7 00071A150754
+ logging synchronous
+ login
+line aux 0
+line vty 0 4
+ password 7 02050D480809
+ login
+ transport input all
+!
+ntp master 2
+ntp update-calendar
+!
+end
