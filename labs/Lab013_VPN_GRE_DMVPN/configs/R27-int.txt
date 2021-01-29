@@ -1,0 +1,182 @@
+Building configuration...
+
+Current configuration : 2716 bytes
+!
+! Last configuration change at 21:11:20 EET Fri Jan 29 2021
+version 15.2
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+!
+hostname R27
+!
+boot-start-marker
+boot-end-marker
+!
+!
+enable secret 5 $1$YPcn$U5NWPq4lLgRxJ5u6p0YVh/
+!
+no aaa new-model
+clock timezone EET 2 0
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+!
+!
+!
+
+
+!
+!
+!
+!
+no ip domain lookup
+ip cef
+ipv6 unicast-routing
+ipv6 cef
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+!
+!
+!
+!
+redundancy
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 192.168.4.27 255.255.255.255
+ ipv6 address 2001:AAAA:BB04:192::27/128
+!
+interface Loopback201
+ ip address 100.4.0.1 255.255.255.255
+!
+interface Tunnel200
+ ip address 10.200.0.40 255.255.255.0
+ no ip redirects
+ ip mtu 1400
+ ip bandwidth-percent eigrp 200 30
+ ip nhrp map 10.200.0.10 10.6.0.1
+ ip nhrp map multicast 10.6.0.1
+ ip nhrp network-id 200
+ ip nhrp holdtime 600
+ ip nhrp nhs 10.200.0.10
+ ip nhrp shortcut
+ ip tcp adjust-mss 1360
+ tunnel source Ethernet0/0
+ tunnel mode gre multipoint
+ tunnel key 200
+!
+interface Tunnel201
+ ip address 10.201.0.40 255.255.255.0
+ no ip redirects
+ ip mtu 1400
+ ip bandwidth-percent eigrp 200 30
+ ip nhrp map 10.201.0.10 10.0.0.1
+ ip nhrp map multicast 10.0.0.1
+ ip nhrp network-id 201
+ ip nhrp holdtime 600
+ ip nhrp nhs 10.201.0.10
+ ip nhrp shortcut
+ ip tcp adjust-mss 1360
+ tunnel source 10.5.0.13
+ tunnel mode gre multipoint
+ tunnel key 201
+!
+interface Ethernet0/0
+ ip address 10.5.0.13 255.255.255.254
+ ipv6 address FE80::27:E0 link-local
+ ipv6 address 2001:AAAA:BB05:112::13:E0/64
+!
+interface Ethernet0/1
+ no ip address
+ shutdown
+!
+interface Ethernet0/2
+ no ip address
+ shutdown
+!
+interface Ethernet0/3
+ no ip address
+ shutdown
+!
+interface Ethernet1/0
+ no ip address
+ shutdown
+!
+interface Ethernet1/1
+ no ip address
+ shutdown
+!
+interface Ethernet1/2
+ no ip address
+ shutdown
+!
+interface Ethernet1/3
+ no ip address
+ shutdown
+!
+!
+router eigrp 200
+ network 10.200.0.0 0.0.0.255
+ network 10.201.0.0 0.0.0.255
+ network 100.4.0.1 0.0.0.0
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+ip route 0.0.0.0 0.0.0.0 10.5.0.12 name R25
+!
+ipv6 route ::/0 2001:AAAA:BB05:112::12:E1 name R25_e_0_1
+!
+!
+!
+control-plane
+!
+!
+!
+!
+!
+!
+banner motd ^C
+!--------------------------------------!
+!                                      !
+!                 STOP                 !
+!   Unauthorized entry is prohibited   !
+!                                      !
+!--------------------------------------!
+^C
+!
+line con 0
+ exec-timeout 0 0
+ password 7 104D000A0618
+ logging synchronous
+ login
+line aux 0
+line vty 0 4
+ password 7 121A0C041104
+ login
+ transport input all
+!
+!
+end
